@@ -107,7 +107,6 @@ class WP_Post_Boxes {
 	 *         (public for wordpress)
 	 */
 	function save( $post_id ) {
-		// file_put_contents(__DIR__ . '/debug.log', print_r($_POST, 1) );
 		if ( ! isset( $_POST['_wp_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['_wp_metabox_nonce'], self::SECURITY ) )
 			return $post_id;
 

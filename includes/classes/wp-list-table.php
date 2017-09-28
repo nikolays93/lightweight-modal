@@ -95,7 +95,7 @@ class Example_List_Table extends WP_List_Table {
             'post_title' => __( 'Title' ),
             '_count'    => __( 'Click Count' ),
             '_selector' => __( 'Selector' ),
-            '_theme'    => __( 'Design' ),
+            // '_theme'    => __( 'Design' ),
             'post_author'   => __( 'Author' ),
             'post_date'     => __( 'Date' ),
             );
@@ -106,7 +106,9 @@ class Example_List_Table extends WP_List_Table {
     /********************************* Columns ********************************/
     protected function column_default( $item, $column_name )
     {
-
+        if( $column_name == '_count' && $item[ $column_name ] <= 0 ) {
+             return '0';
+        }
         return isset( $item[ $column_name ] ) ? $item[ $column_name ] : 'null';
     }
 
@@ -157,11 +159,6 @@ class Example_List_Table extends WP_List_Table {
         );
     }
 
-    protected function column_rating( $item ) {
-
-        return 'Yes';
-    }
-
     /****************************** Bulk Actions ******************************/
     protected function get_bulk_actions() {
         $actions = array(
@@ -183,7 +180,7 @@ class Example_List_Table extends WP_List_Table {
         $sortable_columns = array(
             'post_title'  => array( 'title', false ),
             '_count'  => array( '_count', false ),
-            '_theme'  => array( '_theme', false ),
+            // '_theme'  => array( '_theme', false ),
             'post_author' => array( 'author', false ),
             'post_date'   => array( 'post_date', false ),
             );

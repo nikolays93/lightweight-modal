@@ -43,24 +43,35 @@ function register_smodals_types(){
 }
 
 $mb = new WP_Post_Boxes( array( strtolower(SMODALS::SETTINGS) ) );
-$mb->add_fields( '_count' );
-$mb->add_box( 'Test Name', 'test_callback', $side = false );
+$mb->add_fields( '_selector' );
+$mb->add_box( 'Modal Settings', 'test_callback', $side = true );
 function test_callback() {
     global $post;
 
     $data = array(
             // id or name - required
-            array(
-                'id'    => '_count',
-                'type'  => 'text',
-                'label' => 'TextField',
-                'desc'  => 'This is example text field',
-                ),
-            );
+        array(
+            'id'    => '_selector',
+            'type'  => 'text',
+            'label' => 'Selector',
+            'desc'  => 'Enter CSS Selector for onclick event',
+        ),
+        array(
+            'id'    => '_type',
+            'type'  => 'select',
+            'label' => 'Modal Type: <br>',
+                // 'desc'  => 'Enter CSS Selector for onclick event',
+            'options' => array(
+                'inline' => 'inline', 
+                'ajax'   => 'ajax',
+                'iframe' => 'iframe'
+            ),
+        ),
+    );
 
-    $count = array( '_count' => get_post_meta( $post->ID, '_count', true ) );
+    $count = array( '_selector' => get_post_meta( $post->ID, '_selector', true ) );
 
-    $form = new WP_Admin_Forms( $data, $count, $is_table = true, $args = array(
+    $form = new WP_Admin_Forms( $data, $count, $is_table = false, $args = array(
             'admin_page'  => false,
             // 'item_wrap'   => array('<p>', '</p>'),
             // 'form_wrap'   => array('', ''),

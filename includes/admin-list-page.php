@@ -8,7 +8,7 @@ class SMODALS_List_Page
         $page->set_args( SMODALS::SETTINGS . '-List', array(
             'parent'      => false,
             'title'       => '',
-            'menu'        => 'New Modern Page',
+            'menu'        => __( 'Modals' ),
             'callback'    => array($this, 'page_render'),
             // 'validate'    => array($this, 'validate_options'),
             'permissions' => 'manage_options',
