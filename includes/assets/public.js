@@ -1,16 +1,26 @@
 jQuery(document).ready(function($) {
-    var selectors = $.parseJSON( smodals_opt.selectors );
-
-    console.log(selectors);
-    var ids = Object.keys(selectors);
-
-    ids.forEach( function(item) {
-        $('body').append('<div id="'+ selectors[item].slice(1) +'"></div>');
-        $( selectors[item] ).on('click', function(event) {
-            $( item ).html('opened');
+    if( SModals.modal_selector ){
+       if( SModals.modal_type == 'fancybox3' ){
+        $( SModals.modal_selector ).each(function(index, el) {
+            $(this).attr('data-fancybox', $(this).attr('rel') );
         });
-    } );
-    // selectors.forEach( function(el, key){
-    //     console.log(el, key);
-    // } );
+
+        var fancyModal = $( SModals.modal_selector ).fancybox({
+          animationEffect : SModals.openCloseEffect,
+          transitionEffect : SModals.nextPrevEffect,
+      });
+    }
+    else if(SModals.modal_type) {
+        var fancyModal = $( SModals.modal_selector ).fancybox({
+          openEffect : SModals.openEffect,
+          closeEffect : SModals.closeEffect,
+          nextEffect : SModals.nextEffect,
+          prevEffect : SModals.prevEffect,
+          helpers: {
+            title : { type : 'inside' },
+            thumbs : SModals.thumb ? { width: 120, height: 80 } : false
+        }
+    });
+    }
+}
 });

@@ -43,40 +43,58 @@ function register_smodals_types(){
 }
 
 $mb = new WP_Post_Boxes( array( strtolower(SMODALS::SETTINGS) ) );
-$mb->add_fields( '_selector' );
-$mb->add_box( 'Modal Settings', 'test_callback', $side = true );
-function test_callback() {
+$mb->add_fields( array('_modal_type',)); //'_selector') );
+$mb->add_box( 'Настройки модального окна', 'smodal_settings', $side = true );
+function smodal_settings() {
     global $post;
 
     $data = array(
             // id or name - required
         array(
-            'id'    => '_selector',
-            'type'  => 'text',
-            'label' => 'Selector',
-            'desc'  => 'Enter CSS Selector for onclick event',
-        ),
-        array(
-            'id'    => '_type',
+            'id'    => '_modal_type',
             'type'  => 'select',
-            'label' => 'Modal Type: <br>',
+            'label' => 'Тип: <br>',
+            'input_class' => 'button right',
                 // 'desc'  => 'Enter CSS Selector for onclick event',
             'options' => array(
-                'inline' => 'inline', 
-                'ajax'   => 'ajax',
-                'iframe' => 'iframe'
+                'inline' => 'Прятать на странице',
+                'ajax'   => 'Загружать при открытии',
+                'iframe' => 'Cодержимое iframe'
             ),
         ),
+        // array(
+        //     'id'    => '_selector',
+        //     'type'  => 'text',
+        //     'label' => 'Селектор',
+        //     'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
+        // ),
     );
 
-    $count = array( '_selector' => get_post_meta( $post->ID, '_selector', true ) );
-
-    $form = new WP_Admin_Forms( $data, $count, $is_table = false, $args = array(
+    $form = new WP_Admin_Forms( $data, true, $args = array(
             'admin_page'  => false,
             // 'item_wrap'   => array('<p>', '</p>'),
             // 'form_wrap'   => array('', ''),
             // 'label_tag'   => 'th',
             // 'hide_desc'   => false,
+            'postmeta' => true,
         ) );
+    // var_dump( $form->get_active() );
     echo $form->render();
+}
+
+$mb = new WP_Post_Boxes( array( strtolower(SMODALS::SETTINGS) ) );
+$mb->add_box( 'Шорткод', 'smodal_shortcode', $side = normal );
+function smodal_shortcode() {
+    global $post;
+
+    if( $post instanceof WP_Post ) {
+        $sc = '[smodal title="'.$post->post_title.'" id="'.$post->ID.'"] Открыть [/smodal]';
+        ?>
+        <input type="text" name="" class="widefat" value='<?php echo $sc; ?>' onclick="select()">
+        <?php
+        echo '';
+    }
+    else {
+        echo "Сначала сохраните запись";
+    }
 }

@@ -5,10 +5,11 @@ class SMODALS_List_Page
     function __construct()
     {
         $page = new WP_Admin_Page();
-        $page->set_args( SMODALS::SETTINGS . '-List', array(
+        $page->set_args( SMODALS::SETTINGS, array(
             'parent'      => false,
-            'title'       => '',
-            'menu'        => __( 'Modals' ),
+            'icon_url'    => 'dashicons-external',
+            'title'       => 'Модальные окна',
+            'menu'        => 'Модальные окна',
             'callback'    => array($this, 'page_render'),
             // 'validate'    => array($this, 'validate_options'),
             'permissions' => 'manage_options',
@@ -18,8 +19,7 @@ class SMODALS_List_Page
 
         // $page->set_assets( array($this, 'set_assets') );
 
-        $page->add_metabox( 'metabox1', 'metabox1', array($this, 'metabox1_callback'), $position = 'side');
-        $page->add_metabox( 'metabox2', 'metabox2', array($this, 'metabox2_callback'), $position = 'side');
+        $page->add_metabox( 'metabox1', 'Настройки библиотеки', array($this, 'metabox1_callback'), $position = 'side');
         $page->set_metaboxes();
     }
 
@@ -44,11 +44,6 @@ class SMODALS_List_Page
         $table->prepare_items();
         ?>
 
-        <div style="background:#ececec;border:1px solid #ccc;padding:0 10px;margin-top:5px;border-radius:5px;">
-            <p>This page demonstrates the use of the <code>WP_List_Table</code> class in plugins.</p>
-            <p>Additional class details are available on the <a href="http://codex.wordpress.org/Class_Reference/WP_List_Table" target="_blank">WordPress Codex</a> or <a href="https://developer.wordpress.org/reference/classes/WP_List_Table/" target="_blank">Developer Code Reference</a>.</p>
-        </div>
-
         <!-- <form id="movies-filter" method="get"> -->
         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
@@ -69,39 +64,172 @@ class SMODALS_List_Page
      *     must be public for the WordPress
      */
     function metabox1_callback() {
-        echo "test1";
-    }
-
-    function metabox2_callback() {
-        $data = array(
-            // id or name - required
-            array(
-                'id'    => 'example_0',
-                'type'  => 'text',
-                'label' => 'TextField',
-                'desc'  => 'This is example text field',
-                ),
-             array(
-                'id'    => 'example_1',
-                'type'  => 'select',
-                'label' => 'Select',
-                'options' => array(
-                    // simples first (not else)
-                    'key_option5' => 'option5',
-                    'option1' => array(
-                        'key_option2' => 'option2',
-                        'key_option3' => 'option3',
-                        'key_option4' => 'option4'),
-                    ),
-                ),
-            array(
-                'id'    => 'example_2',
-                'type'  => 'checkbox',
-                'label' => 'Checkbox',
-                ),
+        $animates = array(
+            'fancybox' => array(
+                'none'    => 'Без эффекта',
+                "elastic" => 'Эластичность',
+                "fade"    => 'Угасание',
+                )
             );
 
-        $form = new WP_Admin_Forms( $data, $active = null, $is_table = true, $args = array(
+        $modal_types = array(
+            ''          => 'Не использовать',
+            // 'fancybox2' => 'Fancybox 2',
+            'fancybox3' => 'Fancybox 3',
+            // 'magnific'   => 'Magnific Popup',
+            // 'photoswipe' => 'PhotoSwipe',
+            // 'lightgallery' => https://sachinchoolur.github.io/lightgallery.js/
+            );
+
+        $modal['fancybox2'] = array(
+            array(
+              'type'    => 'select',
+              'id'      => 'lib_props][modal_type',
+              'label'   => 'Библиотека',
+              'options' => $modal_types,
+              'value'   => 'fancybox2',
+              ),
+            array(
+              'type'        => 'text',
+              'id'          => 'lib_props][modal_selector',
+              'label'       => 'Селектор',
+              // 'desc'        => 'Модальное окно (Галерея, всплывающее окно)',
+              'placeholder' => '.fancybox, .zoom',
+              ),
+            array(
+              'type'      => 'checkbox',
+              'id'        => 'lib_props][thumb',
+              'label'     => 'Показывать превью',
+              'desc'      => 'Показывать превью, если определена галерея атрибутом rel',
+              ),
+            array(
+              'type'      => 'checkbox',
+              'id'        => 'lib_props][fancybox_mousewheel',
+              'label'     => 'Прокрутка мышью',
+              'desc'      => 'Прокручивать изображения в fancybox окне колесом мыши',
+              ),
+            array(
+              'type'      => 'select',
+              'id'        => 'lib_props][openEffect',
+              'label'     => 'Анимация при открытии',
+              'options'   => $fancybox_animates,
+              'defaults'  => 'elastic',
+              ),
+            array(
+              'type'      => 'select',
+              'id'        => 'lib_props][closeEffect',
+              'label'     => 'Анимация при закрытии',
+              'options'   => $fancybox_animates,
+              'defaults'  => 'elastic',
+              ),
+            array(
+              'type'      => 'select',
+              'id'        => 'lib_props][nextEffect',
+              'label'     => 'Эфект при перелистывании вперед',
+              'options'   => $fancybox_animates,
+              'defaults'  => 'fade',
+              ),
+            array(
+              'type'      => 'select',
+              'id'        => 'lib_props][prevEffect',
+              'label'     => 'Эфект при перелистывании назад',
+              'options'   => $fancybox_animates,
+              'defaults'  => 'fade',
+              ),
+            array(
+              'type'    => 'html',
+              'id'      => 'for_group',
+              'value'   => 'Для группировки объектов используйте одинаковый <em>rel</em>'
+              ),
+            );
+
+        // revisions-next
+        $modal['fancybox3'] = array(
+            array(
+              'type'    => 'select',
+              'id'      => 'lib_props][modal_type',
+              'label'   => 'Библиотека',
+              'options' => $modal_types,
+              'value'   => 'fancybox3',
+              'input_class' => 'button right',
+              ),
+            array(
+              'type'      => 'text',
+              'id'        => 'lib_props][modal_selector',
+              'label'     => '<hr> <strong>jQuery Селектор</strong> <br>',
+              // 'desc'      => 'Модальное окно (Галерея, всплывающее окно)',
+              'placeholder'   => '.fancybox, .zoom',
+              // 'input_class' => 'button right',
+              ),
+            array(
+              'type'    => 'select',
+              'id'      => 'lib_props][openCloseEffect',
+              'label'   => 'Эффект открытия',
+              'options' => array(
+                'false'     => 'Без эффекта',
+                'zoom'        => 'Увеличение от объекта',
+                'fade'        => 'Угасание',
+                'zoom-in-out' => 'Увеличение из вне',
+                ),
+              'default' => 'zoom',
+              ),
+            array(
+              'type'    => 'select',
+              'id'      => 'lib_props][nextPrevEffect',
+              'label'   => 'Эффект перелистывания',
+              'options' => array(
+                'false'       => 'Без эффекта',
+                'fade'        => 'Угасание',
+                'slide'       => 'Увеличение от объекта',
+                'circular'    => 'Угасание',
+                'tube'        => 'Туба',
+                'zoom-in-out' => 'Увеличение из вне',
+                'rotate'      => 'Переворот',
+                ),
+              'default' => 'fade',
+              ),
+            array(
+              'type'    => 'html',
+              'id'      => 'for_group',
+              'value'   => 'Для группировки объектов используйте одинаковый <em>rel</em>'
+              ),
+            );
+
+        $modal['magnific'] = array(
+            array(
+              'type' => 'select',
+              'id'   => 'modal_type',
+              'label'=> 'Библиотека',
+              'options' => $modal_types,
+              'value' => 'magnific',
+              ),
+            array(
+              'type'      => 'text',
+              'id'        => 'magnific',
+              'label'     => 'Селектор',
+              // 'desc'      => 'Модальное окно (Галерея, всплывающее окно)',
+              'placeholder'   => '.magnific, .zoom',
+              ),
+            );
+
+        $modal['photoswipe'] = array(
+            array(
+              'type' => 'select',
+              'id'   => 'modal_type',
+              'label'=> 'Библиотека',
+              'options' => $modal_types,
+              'value' => 'photoswipe',
+              ),
+            array(
+              'type'      => 'text',
+              'id'        => 'photoswipe',
+              'label'     => 'Селектор',
+              // 'desc'      => 'Модальное окно (Галерея, всплывающее окно)',
+              'placeholder'   => '.photoswipe, .zoom',
+              ),
+            );
+
+        $form = new WP_Admin_Forms( $modal['fancybox3'], $is_table = false, $args = array(
             // Defaults:
             // 'admin_page'  => true,
             // 'item_wrap'   => array('<p>', '</p>'),

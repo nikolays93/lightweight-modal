@@ -118,7 +118,7 @@ class WP_Post_Boxes {
 		// 	return $post_id;
 
 		foreach ($this->meta_fields as $field) {
-			if(isset($_POST[$field])){
+			if( ! empty($_POST[$field]) ){
 				$meta = is_array($_POST[$field]) ?
 				array_filter($_POST[$field], 'sanitize_text_field') : sanitize_text_field( $_POST[$field] );
 				update_post_meta( $post_id, $field, $meta );

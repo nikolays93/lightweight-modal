@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Новый плагин
+Plugin Name: Модальные (всплывающие) окна
 Plugin URI:
 Description:
-Version: 0.0
+Version: 1.0
 Author: NikolayS93
 Author URI: https://vk.com/nikolays_93
 Author EMAIL: nikolayS93@ya.ru
@@ -26,7 +26,7 @@ register_activation_hook( __FILE__, array( 'SMODALS', 'activate' ) );
 register_uninstall_hook( __FILE__, array( 'SMODALS', 'uninstall' ) );
 
 add_action( 'plugins_loaded', array('SMODALS', 'init'), 10 );
-class SMODALS
+class SModals
 {
     const SETTINGS = __CLASS__;
 
@@ -53,6 +53,7 @@ class SMODALS
             'post_type' => SMODALS::SETTINGS,
         ) );
 
+        add_shortcode( 'smodal', array(__CLASS__, 'smodal_shortcode') );
         add_action( 'wp_enqueue_scripts', array(__CLASS__, 'enqueue_modal_scripts') );
         add_action( 'wp_footer', array(__CLASS__, 'set_modals') );
     }
@@ -72,30 +73,67 @@ class SMODALS
     static function enqueue_modal_scripts()
     {
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '.min' : '';
-        wp_enqueue_script(
-            'fancybox3',
-            SMODALS_ASSETS . "/fancybox3/jquery.fancybox{$affix}.js",
-            array('jquery'),
-            '3.0',
-            true
-        );
+        $props = wp_parse_args( self::$settings['lib_props'], array(
+            'modal_type' => false,
+            'modal_selector' => false
+            ) );
 
-        wp_enqueue_style(
-            'fancybox3',
-            SMODALS_ASSETS . "/fancybox3/jquery.fancybox{$affix}.css",
-            null,
-            '3.0'
-        );
+        if( sizeof(self::$posts) >= 1 || $props['modal_selector'] ) {
+            wp_enqueue_script( 'smodals', SMODALS_ASSETS . '/public.js', array('jquery'), '1.0', true );
+        }
 
-        // wp_enqueue_script( 'smodals', SMODALS_ASSETS . '/public.js', array('jquery'), '1.0', true );
+        if( $props['modal_selector'] ) {
+            if( 'fancybox3' === $props['modal_type'] ){
+                wp_enqueue_script(
+                    'fancybox3',
+                    SMODALS_ASSETS . "/fancybox3/jquery.fancybox{$affix}.js",
+                    array('jquery'),
+                    '3.0',
+                    true
+                    );
+
+                wp_enqueue_style(
+                    'fancybox3',
+                    SMODALS_ASSETS . "/fancybox3/jquery.fancybox{$affix}.css",
+                    null,
+                    '3.0'
+                    );
+            }
+
+            wp_localize_script( 'smodals', 'SModals', $props );
+        }
     }
 
     static function set_modals()
     {
-        echo "<a href='#' data-fancybox data-src='#modal_254' href='javascript:;'>Open</a>";
+        // echo '[smodal title="" id="' . $post->ID . '"]Открыть окно[/smodal]';
+
         foreach (self::$posts as $post) {
-            echo "<div id='modal_{$post->ID}' style='display: none;'>{$post->ID}</div>";
+            echo "<div id='modal_{$post->ID}' style='display: none;'>";
+            switch ( get_post_meta( $post->ID, '_modal_type', true ) ) {
+               case 'ajax':
+                    echo '<div style="min-width: 400px;" id="ajax_data_'.$post->ID.'"> '. __( 'Loading..' ) .' </div>';
+                    break;
+
+                case 'inline':
+                default:
+                    echo apply_filters( 'the_content', $post->post_content );
+                    break;
+            }
+            echo "</div>";
         }
+    }
+
+    static function smodal_shortcode( $atts = array(), $content = '' ) {
+        $atts = shortcode_atts( array(
+            'id' => 0,
+        ), $atts, 'smodal' );
+
+        if( ! $content || 0 >= $modal_id = absint($atts['id']) ) {
+            return false;
+        }
+
+        return '<a href="#" data-fancybox data-src="#modal_' . $modal_id . '" href="javascript:;">'. $content .'</a>';
     }
 }
 
