@@ -58,8 +58,8 @@ function smodal_settings() {
                 // 'desc'  => 'Enter CSS Selector for onclick event',
             'options' => array(
                 'inline' => 'Прятать на странице',
-                'ajax'   => 'Загружать при открытии',
-                'iframe' => 'Cодержимое iframe'
+                // 'ajax'   => 'Загружать при открытии',
+                // 'iframe' => 'Cодержимое iframe'
             ),
         ),
         // array(
@@ -82,19 +82,13 @@ function smodal_settings() {
     echo $form->render();
 }
 
-$mb = new WP_Post_Boxes( array( strtolower(SMODALS::SETTINGS) ) );
-$mb->add_box( 'Шорткод', 'smodal_shortcode', $side = normal );
-function smodal_shortcode() {
-    global $post;
+add_action( 'edit_form_after_title', 'do_something_after_title', 10, 1 );
+function do_something_after_title( $post ) {
+    $scr = get_current_screen();
+    if ( $scr->post_type !== strtolower(SMODALS::SETTINGS) ) {
+        return;
+    }
 
-    if( $post instanceof WP_Post ) {
-        $sc = '[smodal title="'.$post->post_title.'" id="'.$post->ID.'"] Открыть [/smodal]';
-        ?>
-        <input type="text" name="" class="widefat" value='<?php echo $sc; ?>' onclick="select()">
-        <?php
-        echo '';
-    }
-    else {
-        echo "Сначала сохраните запись";
-    }
+    $sc = '[smodal title="'.$post->post_title.'" id="'.$post->ID.'"] Открыть [/smodal]';
+    echo '<input type="text" name="" class="widefat" value=\''.$sc.'\' onclick="select()">';
 }

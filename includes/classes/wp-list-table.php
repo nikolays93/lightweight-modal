@@ -162,7 +162,7 @@ class Example_List_Table extends WP_List_Table {
     /****************************** Bulk Actions ******************************/
     protected function get_bulk_actions() {
         $actions = array(
-            'delete' => _x( 'Delete', 'List table bulk action', 'wp-list-table-example' ),
+            'delete' => __( 'Delete' ),
         );
 
         return $actions;

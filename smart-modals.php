@@ -34,6 +34,8 @@ class SModals
 
     public static $settings = array();
 
+    protected static $modal_ids = array();
+
     static function activate()
     {
         add_option( self::SETTINGS, array() );
@@ -55,10 +57,11 @@ class SModals
 
         add_shortcode( 'smodal', array(__CLASS__, 'smodal_shortcode') );
         add_action( 'wp_enqueue_scripts', array(__CLASS__, 'enqueue_modal_scripts') );
-        add_action( 'wp_footer', array(__CLASS__, 'set_modals') );
+        add_action( 'wp_footer', array(__CLASS__, 'add_modals') );
     }
 
-    private static function include_required_classes(){
+    private static function include_required_classes()
+    {
         // Classes
         require_once SMODALS_DIR . '/includes/classes/wp-list-table.php';
         require_once SMODALS_DIR . '/includes/classes/wp-admin-page.php';
@@ -73,16 +76,16 @@ class SModals
     static function enqueue_modal_scripts()
     {
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '.min' : '';
-        $props = wp_parse_args( self::$settings['lib_props'], array(
+        $props = wp_parse_args( isset(self::$settings['lib_props']) ? self::$settings['lib_props'] : array(), array(
             'modal_type' => false,
             'modal_selector' => false
-            ) );
+        ) );
 
         if( sizeof(self::$posts) >= 1 || $props['modal_selector'] ) {
             wp_enqueue_script( 'smodals', SMODALS_ASSETS . '/public.js', array('jquery'), '1.0', true );
         }
 
-        if( $props['modal_selector'] ) {
+        // if( $props['modal_selector'] ) {
             if( 'fancybox3' === $props['modal_type'] ){
                 wp_enqueue_script(
                     'fancybox3',
@@ -101,39 +104,46 @@ class SModals
             }
 
             wp_localize_script( 'smodals', 'SModals', $props );
-        }
+        // }
     }
 
-    static function set_modals()
+    static function smodal_shortcode( $atts = array(), $content = '' )
     {
-        // echo '[smodal title="" id="' . $post->ID . '"]Открыть окно[/smodal]';
-
-        foreach (self::$posts as $post) {
-            echo "<div id='modal_{$post->ID}' style='display: none;'>";
-            switch ( get_post_meta( $post->ID, '_modal_type', true ) ) {
-               case 'ajax':
-                    echo '<div style="min-width: 400px;" id="ajax_data_'.$post->ID.'"> '. __( 'Loading..' ) .' </div>';
-                    break;
-
-                case 'inline':
-                default:
-                    echo apply_filters( 'the_content', $post->post_content );
-                    break;
-            }
-            echo "</div>";
-        }
-    }
-
-    static function smodal_shortcode( $atts = array(), $content = '' ) {
         $atts = shortcode_atts( array(
-            'id' => 0,
+            'id'   => 0,
+            'href' => '#',
         ), $atts, 'smodal' );
 
         if( ! $content || 0 >= $modal_id = absint($atts['id']) ) {
             return false;
         }
 
-        return '<a href="#" data-fancybox data-src="#modal_' . $modal_id . '" href="javascript:;">'. $content .'</a>';
+        self::$modal_ids[] = $modal_id;
+
+        return sprintf('<a href="%s" data-fancybox data-src="#modal_%d" href="javascript:;">%s</a>',
+            esc_url( $atts['href'] ),
+            $modal_id,
+            $content
+        );
+    }
+
+    static function add_modals() {
+        foreach (self::$modal_ids as $post_id) {
+            $_post = get_post( $post_id );
+
+            echo "<div id='modal_{$_post->ID}' style='display: none;'>";
+            switch ( get_post_meta( $_post->ID, '_modal_type', true ) ) {
+                case 'ajax':
+                    echo '<div style="min-width: 400px;" id="ajax_data_'.$_post->ID.'"> '. __( 'Loading..' ) .' </div>';
+                    break;
+
+                case 'inline':
+                default:
+                    echo apply_filters( 'the_content', $_post->post_content );
+                    break;
+            }
+            echo "</div>";
+        }
     }
 }
 
