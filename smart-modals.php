@@ -110,8 +110,10 @@ class SModals
     static function smodal_shortcode( $atts = array(), $content = '' )
     {
         $atts = shortcode_atts( array(
-            'id'   => 0,
-            'href' => '#',
+            'id'      => 0,
+            'href'    => '#',
+            'class'   => '',
+            'link_id' => '',
         ), $atts, 'smodal' );
 
         if( ! $content || 0 >= $modal_id = absint($atts['id']) ) {
@@ -120,9 +122,11 @@ class SModals
 
         self::$modal_ids[] = $modal_id;
 
-        return sprintf('<a href="%s" data-fancybox data-src="#modal_%d" href="javascript:;">%s</a>',
+        return sprintf('<a href="%s" data-fancybox data-src="#modal_%d" id="%s" class="%s" href="javascript:;">%s</a>',
             esc_url( $atts['href'] ),
             $modal_id,
+            esc_attr( $atts['link_id'] ),
+            esc_attr( $atts['class'] ),
             $content
         );
     }
@@ -162,19 +166,19 @@ class SModals
 //     ) );
 // }
 
-add_action('wp_ajax_nopriv_view', 'my_action_callback');
-add_action('wp_ajax_view', 'my_action_callback');
-function my_action_callback() {
-    var_dump($_REQUEST['action']);
-    // if( ! wp_verify_nonce( $_POST['nonce'], 'any_secret_string' ) ){
-    //     echo 'Ошибка! нарушены правила безопасности';
-    //     wp_die();
-    // }
+// add_action('wp_ajax_nopriv_view', 'my_action_callback');
+// add_action('wp_ajax_view', 'my_action_callback');
+// function my_action_callback() {
+//     var_dump($_REQUEST['action']);
+//     // if( ! wp_verify_nonce( $_POST['nonce'], 'any_secret_string' ) ){
+//     //     echo 'Ошибка! нарушены правила безопасности';
+//     //     wp_die();
+//     // }
 
-    $post = get_post(254);
-    echo apply_filters( 'the_content', $post->post_content );
+//     $post = get_post(254);
+//     echo apply_filters( 'the_content', $post->post_content );
 
-    // do something.. for ex:
-    echo intval( $_POST['whatever'] );
-    wp_die();
-}
+//     // do something.. for ex:
+//     echo intval( $_POST['whatever'] );
+//     wp_die();
+// }
