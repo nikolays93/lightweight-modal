@@ -55,9 +55,12 @@ class SModals
             'post_type' => SMODALS::SETTINGS,
         ) );
 
-        add_shortcode( 'smodal', array(__CLASS__, 'smodal_shortcode') );
         add_action( 'wp_enqueue_scripts', array(__CLASS__, 'enqueue_modal_scripts') );
-        add_action( 'wp_footer', array(__CLASS__, 'add_modals') );
+        add_shortcode( 'smodal', array('SModals_Shortcode', 'smodal_shortcode') );
+        add_action( 'wp_footer', array('SModals_Shortcode', 'add_modals') );
+
+        add_action( 'wp_ajax_nopriv_increase_click_count', array('SModals_Shortcode', 'increase_click_count') );
+        add_action( 'wp_ajax_increase_click_count', array('SModals_Shortcode', 'increase_click_count') );
     }
 
     private static function include_required_classes()
@@ -70,6 +73,7 @@ class SModals
 
         // includes
         require_once SMODALS_DIR . '/includes/register-post_type.php';
+        require_once SMODALS_DIR . '/includes/shortcode.php';
         require_once SMODALS_DIR . '/includes/admin-list-page.php';
     }
 
@@ -104,67 +108,13 @@ class SModals
             }
 
             wp_localize_script( 'smodals', 'SModals', $props );
+            wp_localize_script( 'smodals', 'SM_Settings', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce( 'Secret' ),
+                ) );
         // }
     }
-
-    static function smodal_shortcode( $atts = array(), $content = '' )
-    {
-        $atts = shortcode_atts( array(
-            'id'      => 0,
-            'href'    => '#',
-            'class'   => '',
-            'link_id' => '',
-        ), $atts, 'smodal' );
-
-        if( ! $content || 0 >= $modal_id = absint($atts['id']) ) {
-            return false;
-        }
-
-        self::$modal_ids[] = $modal_id;
-
-        return sprintf('<a href="%s" data-fancybox data-src="#modal_%d" id="%s" class="%s" href="javascript:;">%s</a>',
-            esc_url( $atts['href'] ),
-            $modal_id,
-            esc_attr( $atts['link_id'] ),
-            esc_attr( $atts['class'] ),
-            $content
-        );
-    }
-
-    static function add_modals() {
-        foreach (self::$modal_ids as $post_id) {
-            $_post = get_post( $post_id );
-
-            echo "<div id='modal_{$_post->ID}' style='display: none;'>";
-            switch ( get_post_meta( $_post->ID, '_modal_type', true ) ) {
-                case 'ajax':
-                    echo '<div style="min-width: 400px;" id="ajax_data_'.$_post->ID.'"> '. __( 'Loading..' ) .' </div>';
-                    break;
-
-                case 'inline':
-                default:
-                    echo apply_filters( 'the_content', $_post->post_content );
-                    break;
-            }
-            echo "</div>";
-        }
-    }
 }
-
-// add_action('', '');
-// function enqueue_modal_scripts() {
-
-//     $selectors = array();
-//     foreach ($posts as $post) {
-//         echo "<div class='container'> {$post->post_content} </div>";
-
-//         $selectors[ '#modal_' . $post->ID ] = get_post_meta( $post->ID, '_selector', true );
-//     }
-
-//     wp_localize_script( 'smodals', 'smodals_opt', array(
-//         'selectors' => json_encode($selectors),
-//     ) );
-// }
 
 // add_action('wp_ajax_nopriv_view', 'my_action_callback');
 // add_action('wp_ajax_view', 'my_action_callback');
