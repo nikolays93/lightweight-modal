@@ -55,9 +55,9 @@ class SModals
             'post_type' => SMODALS::SETTINGS,
         ) );
 
-        add_action( 'wp_enqueue_scripts', array(__CLASS__, 'enqueue_modal_scripts') );
         add_shortcode( 'smodal', array('SModals_Shortcode', 'smodal_shortcode') );
         add_action( 'wp_footer', array('SModals_Shortcode', 'add_modals') );
+        add_action( 'wp_enqueue_scripts', array(__CLASS__, 'enqueue_modal_scripts') );
 
         add_action( 'wp_ajax_nopriv_increase_click_count', array('SModals_Shortcode', 'increase_click_count') );
         add_action( 'wp_ajax_increase_click_count', array('SModals_Shortcode', 'increase_click_count') );

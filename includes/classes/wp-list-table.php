@@ -9,40 +9,7 @@ class Example_List_Table extends WP_List_Table {
     protected $columns = array();
 
     protected $fields = array();
-    protected $example_data = array(
-        array(
-            'ID'       => 1,
-            'title'    => '300',
-        ),
-        array(
-            'ID'       => 2,
-            'title'    => 'Eyes Wide Shut',
-        ),
-        array(
-            'ID'       => 3,
-            'title'    => 'Moulin Rouge!',
-        ),
-        array(
-            'ID'       => 4,
-            'title'    => 'Snow White',
-        ),
-        array(
-            'ID'       => 5,
-            'title'    => 'Super 8',
-        ),
-        array(
-            'ID'       => 6,
-            'title'    => 'The Fountain',
-        ),
-        array(
-            'ID'       => 7,
-            'title'    => 'Watchmen',
-        ),
-        array(
-            'ID'       => 8,
-            'title'    => '2001',
-        ),
-    );
+    protected $example_data = array();
 
     public function __construct()
     {
@@ -94,7 +61,7 @@ class Example_List_Table extends WP_List_Table {
             'cb'       => '<input type="checkbox" />',
             'post_title' => __( 'Title' ),
             '_count'    => __( 'Click Count' ),
-            '_selector' => __( 'Selector' ),
+            // '_selector' => __( 'Selector' ),
             // '_theme'    => __( 'Design' ),
             'post_author'   => __( 'Author' ),
             'post_date'     => __( 'Date' ),
@@ -109,7 +76,7 @@ class Example_List_Table extends WP_List_Table {
         if( $column_name == '_count' && $item[ $column_name ] <= 0 ) {
              return '0';
         }
-        return isset( $item[ $column_name ] ) ? $item[ $column_name ] : 'null';
+        return isset( $item[ $column_name ] ) ? $item[ $column_name ] : '';
     }
 
     protected function column_cb( $item )
@@ -157,6 +124,23 @@ class Example_List_Table extends WP_List_Table {
             $item['post_title'],
             $this->row_actions( $actions )
         );
+    }
+
+    protected function column_post_author( $item )
+    {
+        $_user = get_user_by( 'id', $item['post_author'] );
+        if( $_user instanceof WP_User ) {
+            return $_user->user_nicename;
+        }
+        else {
+            return 'undefined';
+        }
+    }
+
+    protected function column_post_date( $item )
+    {
+        return __('Published') . '<br />' .
+        date( get_option( 'date_format' ), strtotime($item['post_date']) );
     }
 
     /****************************** Bulk Actions ******************************/
@@ -213,98 +197,29 @@ class Example_List_Table extends WP_List_Table {
      * @uses $this->set_pagination_args()
      */
     public function prepare_items() {
-        global $wpdb; //This is used only if making any database queries
+        global $wpdb;
 
-        /*
-         * First, lets decide how many records per page to show
-         */
-        $per_page = 5;
+        $per_page = 20;
 
-        /*
-         * REQUIRED. Now we need to define our column headers. This includes a complete
-         * array of columns to be displayed (slugs & titles), a list of columns
-         * to keep hidden, and a list of columns that are sortable. Each of these
-         * can be defined in another method (as we've done here) before being
-         * used to build the value for our _column_headers property.
-         */
         $columns  = $this->get_columns();
         $hidden   = array();
         $sortable = $this->get_sortable_columns();
 
-        /*
-         * REQUIRED. Finally, we build an array to be used by the class for column
-         * headers. The $this->_column_headers property takes an array which contains
-         * three other arrays. One for all columns, one for hidden columns, and one
-         * for sortable columns.
-         */
         $this->_column_headers = array( $columns, $hidden, $sortable );
 
-        /**
-         * Optional. You can handle your bulk actions however you see fit. In this
-         * case, we'll handle them within our package just to keep things clean.
-         */
         $this->process_bulk_action();
-
-        /*
-         * GET THE DATA!
-         *
-         * Instead of querying a database, we're going to fetch the example data
-         * property we created for use in this plugin. This makes this example
-         * package slightly different than one you might build on your own. In
-         * this example, we'll be using array manipulation to sort and paginate
-         * our dummy data.
-         *
-         * In a real-world situation, this is probably where you would want to
-         * make your actual database query. Likewise, you will probably want to
-         * use any posted sort or pagination data to build a custom query instead,
-         * as you'll then be able to use the returned query data immediately.
-         *
-         * For information on making queries in WordPress, see this Codex entry:
-         * http://codex.wordpress.org/Class_Reference/wpdb
-         */
 
         $data = $this->example_data;
 
 
-        /*
-         * This checks for sorting input and sorts the data in our array of dummy
-         * data accordingly (using a custom usort_reorder() function). It's for
-         * example purposes only.
-         *
-         * In a real-world situation involving a database, you would probably want
-         * to handle sorting by passing the 'orderby' and 'order' values directly
-         * to a custom query. The returned data will be pre-sorted, and this array
-         * sorting technique would be unnecessary. In other words: remove this when
-         * you implement your own query.
-         */
         usort( $data, array( $this, 'usort_reorder' ) );
 
-        /*
-         * REQUIRED for pagination. Let's figure out what page the user is currently
-         * looking at. We'll need this later, so you should always include it in
-         * your own package classes.
-         */
         $current_page = $this->get_pagenum();
 
-        /*
-         * REQUIRED for pagination. Let's check how many items are in our data array.
-         * In real-world use, this would be the total number of items in your database,
-         * without filtering. We'll need this later, so you should always include it
-         * in your own package classes.
-         */
         $total_items = count( $data );
 
-        /*
-         * The WP_List_Table class does not handle pagination for us, so we need
-         * to ensure that the data is trimmed to only the current page. We can use
-         * array_slice() to do that.
-         */
         $data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
-        /*
-         * REQUIRED. Now we can add our *sorted* data to the items property, where
-         * it can be used by the rest of the class.
-         */
         $this->items = $data;
 
         /**
