@@ -22,25 +22,25 @@ jQuery(document).ready(function($) {
                 }
             });
         }
-
-        $('[data-modal-id]').on('click', function(event) {
-            var modal_id = +$(this).attr( 'data-modal-id' );
-            if( modal_id >= 1 ) {
-                $.ajax({
-                    type: 'POST',
-                    url: SM_Settings.ajax_url,
-                    data: {
-                        action: 'increase_click_count',
-                        nonce: SM_Settings.nonce,
-                        modal_id: modal_id
-                    },
-                    success: function(response){
-                        //alert('Получено с сервера: ' + response);
-                    }
-                }).fail(function() {
-                    console.log('Warning: Ajax Fatal Error!');
-                });
-            }
-        });
     }
+
+    $('[data-modal-id]').on('click', function(event) {
+        var modal_id = +$(this).attr( 'data-modal-id' );
+        if( modal_id >= 1 ) {
+            $.ajax({
+                type: 'POST',
+                url: SM_Settings.ajax_url,
+                data: {
+                    action: 'increase_click_count',
+                    nonce: SM_Settings.nonce,
+                    modal_id: modal_id
+                },
+                success: function(response){
+                    //alert('Получено с сервера: ' + response);
+                }
+            }).fail(function() {
+                console.log('Warning: Ajax Fatal Error!');
+            });
+        }
+    });
 });
