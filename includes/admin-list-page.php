@@ -95,7 +95,10 @@ class SMODALS_List_Page
               'label'       => 'Селектор',
               // 'desc'        => 'Модальное окно (Галерея, всплывающее окно)',
               'placeholder' => '.fancybox, .zoom',
+              'custom_attributes' => array(
+                'onclick' => 'select()',
               ),
+            ),
             array(
               'type'      => 'checkbox',
               'id'        => 'lib_props][thumb',
@@ -159,6 +162,9 @@ class SMODALS_List_Page
               'label'     => '<hr> <strong>jQuery Селектор</strong> <br>',
               // 'desc'      => 'Модальное окно (Галерея, всплывающее окно)',
               'placeholder'   => '.fancybox, .zoom',
+              'custom_attributes' => array(
+                'onclick' => 'if(!this.value)this.value=jQuery(this).attr(\'placeholder\');focus()',
+              ),
               // 'input_class' => 'button right',
               ),
             array(
