@@ -39,7 +39,7 @@ class SMODALS_List_Page
      */
     function page_render()
     {
-        $table = new Example_List_Table();
+        $table = new Modals_List_Table();
         $table->set_fields( array('post_type' => SMODALS::SETTINGS) );
         $table->prepare_items();
         ?>
