@@ -49,15 +49,15 @@ class Utils {
     private static function include_required_classes()
     {
         $classes = array(
-            'Example_List_Table' => 'wp-list-table.php',
-            'WP_Admin_Page'      => 'wp-admin-page.php',
-            'WP_Admin_Forms'     => 'wp-admin-forms.php',
-            'WP_Post_Boxes'      => 'wp-post-boxes.php',
+            __NAMESPACE__ . '\List_Table'         => '/wp-list-table.php',
+            __NAMESPACE__ . '\WP_Admin_Page'      => '/classes/wp-admin-page.php',
+            __NAMESPACE__ . '\WP_Admin_Forms'     => '/classes/wp-admin-forms.php',
+            __NAMESPACE__ . '\WP_Post_Boxes'      => '/classes/wp-post-boxes.php',
             );
 
         foreach ($classes as $classname => $dir) {
             if( ! class_exists($classname) ) {
-                require_once DIR . '/includes/classes/' . $dir;
+                require_once DIR . '/includes' . $dir;
             }
         }
 
