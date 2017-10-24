@@ -1,15 +1,20 @@
 <?php
 
+namespace CDevelopers\modal;
+
+if ( ! defined( 'ABSPATH' ) )
+  exit; // disable direct access
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class Modals_List_Table extends WP_List_Table {
+class List_Table extends \WP_List_Table {
 
     protected $columns = array();
 
     protected $fields = array();
-    protected $example_data = array();
+    protected $data = array();
 
     public function __construct()
     {
@@ -43,7 +48,7 @@ class Modals_List_Table extends WP_List_Table {
                 }
             }
         }
-        $this->example_data = $res;
+        $this->data = $res;
         // $this->fields = $rows;
 
         // foreach ($rows as $row) {
@@ -54,17 +59,19 @@ class Modals_List_Table extends WP_List_Table {
         //     }
         // }
     }
+
     /** THEAD */
     public function get_columns()
     {
         $columns = array(
-            'cb'       => '<input type="checkbox" />',
-            'post_title' => __( 'Title' ),
-            '_count'    => __( 'Click Count' ),
-            // '_selector' => __( 'Selector' ),
-            // '_theme'    => __( 'Design' ),
-            'post_author'   => __( 'Author' ),
-            'post_date'     => __( 'Date' ),
+            'cb'           => '<input type="checkbox" />',
+            'post_title'   => __( 'Title', LANG ),
+            'shortcode'    => __( 'Shortcode', LANG ),
+            '_count'       => __( 'Click Count', LANG ),
+            // '_selector' => 'Selector',
+            // '_theme'    => 'Design',
+            'post_author'  => __( 'Author', LANG ),
+            'post_date'    => __( 'Date', LANG ),
             );
 
         return $columns;
@@ -73,9 +80,10 @@ class Modals_List_Table extends WP_List_Table {
     /********************************* Columns ********************************/
     protected function column_default( $item, $column_name )
     {
-        if( $column_name == '_count' && $item[ $column_name ] <= 0 ) {
-             return '0';
+        if( '_count' === $column_name && empty($item[ $column_name ]) ) {
+            return 0;
         }
+
         return isset( $item[ $column_name ] ) ? $item[ $column_name ] : '';
     }
 
@@ -112,7 +120,6 @@ class Modals_List_Table extends WP_List_Table {
             'movie'  => $item['ID'],
         );
 
-
         $actions['delete'] = sprintf(
             '<a href="%1$s">%2$s</a>',
             get_delete_post_link( $item['ID'], '', true ),
@@ -126,21 +133,25 @@ class Modals_List_Table extends WP_List_Table {
         );
     }
 
-    protected function column_post_author( $item )
-    {
-        $_user = get_user_by( 'id', $item['post_author'] );
-        if( $_user instanceof WP_User ) {
-            return $_user->user_nicename;
-        }
-        else {
-            return 'undefined';
-        }
+    protected function column_shortcode( $item ) {
+        $onclick = 'this.select();return 0;';
+        $styles = '
+            font-size: 12px;
+            max-width: 100%;';
+
+        return sprintf('<input type="text" value=\'[%1$s id="%2$d" title="%3$s"]%4$s[/%1$s]\' onclick="%5$s" style="%6$s">',
+            Utils::SC_NAME,
+            $item['ID'],
+            $item['post_title'],
+            __( 'Open', LANG ),
+            $onclick,
+            $styles );
     }
 
-    protected function column_post_date( $item )
-    {
-        return __('Published') . '<br />' .
-        date( get_option( 'date_format' ), strtotime($item['post_date']) );
+    protected function column_post_author( $item ) {
+        $_user = get_user_by( 'id', $item['post_author'] );
+
+        return sprintf('<a href="%s">%s</a>', get_edit_user_link( $_user->ID ), $_user->data->user_nicename );
     }
 
     /****************************** Bulk Actions ******************************/
@@ -164,7 +175,7 @@ class Modals_List_Table extends WP_List_Table {
         $sortable_columns = array(
             'post_title'  => array( 'title', false ),
             '_count'  => array( '_count', false ),
-            // '_theme'  => array( '_theme', false ),
+            '_theme'  => array( '_theme', false ),
             'post_author' => array( 'author', false ),
             'post_date'   => array( 'post_date', false ),
             );
@@ -209,7 +220,7 @@ class Modals_List_Table extends WP_List_Table {
 
         $this->process_bulk_action();
 
-        $data = $this->example_data;
+        $data = $this->data;
 
 
         usort( $data, array( $this, 'usort_reorder' ) );

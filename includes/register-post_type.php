@@ -1,22 +1,27 @@
 <?php
 
-add_action('init', 'register_smodals_types');
-function register_smodals_types(){
-    register_post_type(SMODALS::SETTINGS, array(
+namespace CDevelopers\modal;
+
+if ( ! defined( 'ABSPATH' ) )
+  exit; // disable direct access
+
+add_action('init', __NAMESPACE__ . '\register_modal_types');
+function register_modal_types(){
+    register_post_type( Utils::SETTINGS, array(
         'label'  => null,
         'labels' => array(
-            'name'               => 'Всплывающие окна',
-            'singular_name'      => 'Всплывающее окно',
-            'add_new'            => 'Добавить всплывающее окно',
-            'add_new_item'       => 'Добавление всплывающего окна',
-            'edit_item'          => 'Редактирование всплывающего окна',
-            'new_item'           => 'Новое всплывающее окно',
-            'view_item'          => 'Смотреть всплывающее окно',
-            'search_items'       => 'Искать всплывающее окно',
-            'not_found'          => 'Не найдено',
-            'not_found_in_trash' => 'Не найдено в корзине',
-            'parent_item_colon'  => '',
-            // 'menu_name'          => 'Всплывающие окна',
+            'name'               => __( 'Всплывающие окна', LANG ),
+            'singular_name'      => __( 'Всплывающее окно', LANG ),
+            'add_new'            => __( 'Добавить всплывающее окно', LANG ),
+            'add_new_item'       => __( 'Добавление всплывающего окна', LANG ),
+            'edit_item'          => __( 'Редактирование всплывающего окна', LANG ),
+            'new_item'           => __( 'Новое всплывающее окно', LANG ),
+            'view_item'          => __( 'Смотреть всплывающее окно', LANG ),
+            'search_items'       => __( 'Искать всплывающее окно', LANG ),
+            'not_found'          => __( 'Не найдено', LANG ),
+            'not_found_in_trash' => __( 'Не найдено в корзине', LANG ),
+            // 'parent_item_colon'  => '',
+            // 'menu_name'          __( => 'Всплывающие окна', LANG ),
         ),
         'description'         => '',
         'public'              => false,
@@ -42,10 +47,10 @@ function register_smodals_types(){
     ) );
 }
 
-$mb = new WP_Post_Boxes( array( strtolower(SMODALS::SETTINGS) ) );
+$mb = new WP_Post_Boxes( array( strtolower(Utils::SETTINGS) ) );
 $mb->add_fields( array('_modal_type',)); //'_selector') );
-$mb->add_box( 'Настройки модального окна', 'smodal_settings', $side = true );
-function smodal_settings() {
+$mb->add_box( __( 'Настройки модального окна', LANG ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
+function modal_post_metabox() {
     global $post;
 
     $data = array(
@@ -82,10 +87,10 @@ function smodal_settings() {
     echo $form->render();
 }
 
-add_action( 'edit_form_after_title', 'do_something_after_title', 10, 1 );
+add_action( 'edit_form_after_title', __NAMESPACE__ . '\do_something_after_title', 10, 1 );
 function do_something_after_title( $post ) {
     $scr = get_current_screen();
-    if ( $scr->post_type !== strtolower(SMODALS::SETTINGS) ) {
+    if ( $scr->post_type !== strtolower(Utils::SETTINGS) ) {
         return;
     }
 

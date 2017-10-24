@@ -1,11 +1,16 @@
 <?php
 
-class SMODALS_List_Page
+namespace CDevelopers\modal;
+
+if ( ! defined( 'ABSPATH' ) )
+  exit; // disable direct access
+
+class Admin_Page
 {
     function __construct()
     {
-        $page = new WP_Admin_Page();
-        $page->set_args( SMODALS::SETTINGS, array(
+        $page = new WP_Admin_Page( Utils::SETTINGS );
+        $page->set_args( array(
             'parent'      => false,
             'icon_url'    => 'dashicons-external',
             'title'       => 'Модальные окна',
@@ -17,44 +22,8 @@ class SMODALS_List_Page
             'columns'     => 2,
             ) );
 
-        // $page->set_assets( array($this, 'set_assets') );
-
-        $page->add_metabox( 'metabox1', 'Настройки библиотеки', array($this, 'metabox1_callback'), $position = 'side');
+        $page->add_metabox( 'lib_settings', __( 'Lib settings', LANG ), array($this, 'lib_metabox'), 'side' );
         $page->set_metaboxes();
-    }
-
-    // function set_assets()
-    // {
-    //     wp_enqueue_script( 'PLUGINNAME_Script', SMODALS_ASSETS . '/page.js', array('jquery'), '1.0', true );
-    //     wp_localize_script('PLUGINNAME_Script', 'PLUGINNAME_opt', array(
-    //         'nonce' => wp_create_nonce( 'PLUGINNAME' ),
-    //         ) );
-    // }
-
-    /**
-     * Основное содержимое страницы
-     *
-     * @access
-     *     must be public for the WordPress
-     */
-    function page_render()
-    {
-        $table = new Modals_List_Table();
-        $table->set_fields( array('post_type' => SMODALS::SETTINGS) );
-        $table->prepare_items();
-        ?>
-
-        <!-- <form id="movies-filter" method="get"> -->
-        <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-        <!-- Now we can render the completed list table -->
-        <?php
-            $table->display();
-            $create_link = get_admin_url() . 'post-new.php?post_type=' . strtolower('smodals');
-        ?>
-        <!-- </form> -->
-        <a href="<?php echo $create_link ?>" class="button button-primary" style="margin-top: 5px;">Добавить</a>
-        <?php
     }
 
     /**
@@ -63,7 +32,8 @@ class SMODALS_List_Page
      * @access
      *     must be public for the WordPress
      */
-    function metabox1_callback() {
+    function lib_metabox()
+    {
         $animates = array(
             'fancybox' => array(
                 'none'    => 'Без эффекта',
@@ -248,5 +218,30 @@ class SMODALS_List_Page
         submit_button( 'Сохранить', 'primary right', 'save_changes' );
         echo '<div class="clear"></div>';
     }
+
+    /**
+     * Основное содержимое страницы
+     *
+     * @access
+     *     must be public for the WordPress
+     */
+    function page_render() {
+        $table = new List_Table();
+        $table->set_fields( array('post_type' => Utils::SETTINGS) );
+        $table->prepare_items();
+        ?>
+
+        <!-- <form id="movies-filter" method="get"> -->
+        <!-- For plugins, we also need to ensure that the form posts back to our current page -->
+        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+        <!-- Now we can render the completed list table -->
+        <?php
+        $table->display();
+        $create_link = get_admin_url() . 'post-new.php?post_type=' . Utils::SETTINGS;
+        ?>
+        <!-- </form> -->
+        <a href="<?php echo $create_link ?>" class="button button-primary" style="margin-top: 5px;">Добавить</a>
+        <?php
+    }
 }
-new SMODALS_List_Page();
+new Admin_Page();

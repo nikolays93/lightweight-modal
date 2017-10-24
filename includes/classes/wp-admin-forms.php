@@ -1,5 +1,13 @@
 <?php
 
+namespace CDevelopers\modal;
+
+if ( ! defined( 'ABSPATH' ) )
+  exit; // disable direct access
+
+/**
+ * @todo: add defaults
+ */
 class WP_Admin_Forms {
     static $clear_value = false;
     protected $inputs, $args, $is_table, $active;
@@ -17,17 +25,17 @@ class WP_Admin_Forms {
             $data = array($data);
 
         $args = self::parse_defaults($args, $is_table);
-        if( $args['admin_page'] )
-            $data = self::admin_page_options( $data, $args['admin_page'] );
+        if( $args['admin_page'] || $args['sub_name'] )
+            $data = self::admin_page_options( $data, $args['admin_page'], $args['sub_name'] );
 
         $this->fields = $data;
         $this->args = $args;
         $this->is_table = $is_table;
-        $this->active = $this->_active();
     }
 
     public function render( $return=false )
     {
+        $this->get_active();
 
         $html = $this->args['form_wrap'][0];
         foreach ($this->fields as $field) {
@@ -39,12 +47,16 @@ class WP_Admin_Forms {
             $html .= self::_field_template( $field, $input, $this->is_table );
         }
         $html .= $this->args['form_wrap'][1];
-
         $result = $html . "\n" . implode("\n", $this->hiddens);
         if( $return )
             return $result;
 
         echo $result;
+    }
+
+    public function set_active( $active )
+    {
+        $this->active = $active;
     }
 
     public static function render_input( &$field, $active, $for_table = false )
@@ -74,7 +86,7 @@ class WP_Admin_Forms {
 
         $field = wp_parse_args( $field, $defaults );
 
-        if( ! in_array($field['type'], array('checkbox', 'select', 'radio')) && $field['default'] !== '' ) {
+        if( $field['default'] && ! in_array($field['type'], array('checkbox', 'select', 'radio')) ) {
             $field['placeholder'] = $field['default'];
         }
 
@@ -86,6 +98,10 @@ class WP_Admin_Forms {
 
     public function get_active()
     {
+        if( ! $this->active ) {
+            $this->active = $this->_active();
+        }
+
         return $this->active;
     }
 
@@ -122,24 +138,29 @@ class WP_Admin_Forms {
      */
     private function _active()
     {
-        $option = $this->args['admin_page'];
-
-        /** get active values */
         if( $this->args['postmeta'] ){
             global $post;
-
 
             if( ! $post instanceof WP_Post ) {
                 return false;
             }
 
             $active = array();
-            foreach ($this->fields as $field) {
-                $active[ $field['id'] ] = get_post_meta( $post->ID, $field['id'], true );
+            if( $sub_name = $this->args['sub_name'] ) {
+                $active = get_post_meta( $post->ID, $sub_name, true );
+            }
+            else {
+                foreach ($this->fields as $field) {
+                    $active[ $field['id'] ] = get_post_meta( $post->ID, $field['id'], true );
+                }
             }
         }
         else {
-            $active = get_option( $option, array() );
+            $active = get_option( $this->args['admin_page'], array() );
+
+            if( $sub_name = $this->args['sub_name'] ) {
+                $active = isset($active[ $sub_name ]) ? $active[ $sub_name ] : false;
+            }
         }
 
         /** if active not found */
@@ -220,8 +241,8 @@ class WP_Admin_Forms {
 
     private static function _input_template( $field, $entry, $for_table = false )
     {
-        $name         = 'name="' . esc_attr( $field['name'] ) . '"';
-        $id           = 'id="' . esc_attr( $field['id'] ) . '"';
+        $name = 'name="' . esc_attr( $field['name'] ) . '"';
+        $id   = 'id="' . esc_attr( $field['id'] ) . '"';
 
         $class = '';
         if( is_array($field['input_class']) ) {
@@ -268,23 +289,33 @@ class WP_Admin_Forms {
                 break;
             case 'checkbox' :
                 $val = $field['value'] ? $field['value'] : 1;
-                $checked = checked( $entry, $val, false );
+                $checked = checked( $entry, true, false );
+                // if( $field['default'] ) {
+                //     if( ! $entry ) {
+                //         $checked = checked( in_array($entry, array('true', '1', 'on')), true, false );
+                //     }
+                //     $clear_value = 'false';
+                // }
+
+
 
                 // if $clear_value === false dont use defaults (couse default + empty value = true)
-                if( false !== self::$clear_value )
-                    $input .= "<input type='hidden' {$name} value='{self::$clear_value}'>\n";
+                if( isset($clear_value) || false !== ($clear_value = self::$clear_value) ) {
+                    $input .= "<input type='hidden' {$name} value='{$clear_value}'>\n";
+                }
 
-                $input .= "<input type='checkbox' {$name} {$id} value='{$val}'";
+                $input .= "<input type='checkbox' {$name} {$id} {$attrs} value='{$val}'";
                 $input .= " class='input-checkbox{$class}' {$checked} />";
                 $input .= $label;
                 break;
+            case 'hidden' :
             case 'password' :
             case 'text' :
             case 'email' :
             case 'tel' :
             case 'number' :
-                $type = "type='" . esc_attr( $field['type'] ) . "'";
-                $val = esc_attr( $entry );
+                $type = sprintf('type="%s"', esc_attr( $field['type'] ));
+                $val = $field['value'] ? esc_attr( $field['value'] ) : esc_attr( $entry );
 
                 $input .= $label;
                 $input .= "<input {$type} {$name} {$id} {$ph} {$maxlength} {$autocomplete}";
@@ -354,6 +385,7 @@ class WP_Admin_Forms {
             'label_tag'   => 'th',
             'hide_desc'   => false,
             'postmeta'    => false,
+            'sub_name'    => '',
         );
 
         if( $is_table )
@@ -405,10 +437,10 @@ class WP_Admin_Forms {
 
         $checked = ( $active === false ) ? false : true;
         if( $active === 'false' || $active === 'off' || $active === '0' )
-            $active = false;
+            return false;
 
         if( $active === 'true'  || $active === 'on'  || $active === '1' )
-            $active = true;
+            return true;
 
         if( $active || $field['default'] ){
             if( $field['value'] ){
@@ -425,24 +457,30 @@ class WP_Admin_Forms {
                 if( $active || (!$checked && $field['default']) )
                     return true;
             }
-
-            return false;
         }
+
+        return false;
     }
 
-    private static function admin_page_options( $fields, $option_name )
+    private static function admin_page_options( $fields, $option_name, $sub_name = false )
     {
         foreach ($fields as &$field) {
-          if ( ! isset($field['id']) && ! isset($field['name']) )
-            continue;
+            if ( ! isset($field['id']) && ! isset($field['name']) )
+                continue;
 
-        if( isset($field['name']) )
-            $field['name'] = "{$option_name}[{$field['name']}]";
-        else
-            $field['name'] = "{$option_name}[{$field['id']}]";
+            if( $option_name ) {
+                if( isset($field['name']) ) {
+                    $field['name'] = ($sub_name) ?
+                        "{$option_name}[{$sub_name}][{$field['name']}]" : "{$option_name}[{$field['name']}]";
+                }
+                else {
+                    $field['name'] = ($sub_name) ?
+                        "{$option_name}[{$sub_name}][{$field['id']}]" : "{$option_name}[{$field['id']}]";
+                }
 
-        if( !isset($field['check_active']) )
-            $field['check_active'] = 'id';
+                if( !isset($field['check_active']) )
+                    $field['check_active'] = 'id';
+            }
         }
 
         return $fields;
