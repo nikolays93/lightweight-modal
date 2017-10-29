@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) )
 
 add_action('init', __NAMESPACE__ . '\register_modal_types');
 function register_modal_types(){
-    register_post_type( Utils::SETTINGS, array(
+    register_post_type( Utils::OPTION, array(
         'label'  => null,
         'labels' => array(
             'name'               => __( 'Всплывающие окна', LANG ),
@@ -47,7 +47,7 @@ function register_modal_types(){
     ) );
 }
 
-$mb = new WP_Post_Boxes( array( strtolower(Utils::SETTINGS) ) );
+$mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
 $mb->add_fields( array('_modal_type',)); //'_selector') );
 $mb->add_box( __( 'Настройки модального окна', LANG ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
 function modal_post_metabox() {
@@ -90,7 +90,7 @@ function modal_post_metabox() {
 add_action( 'edit_form_after_title', __NAMESPACE__ . '\do_something_after_title', 10, 1 );
 function do_something_after_title( $post ) {
     $scr = get_current_screen();
-    if ( $scr->post_type !== strtolower(Utils::SETTINGS) ) {
+    if ( $scr->post_type !== strtolower(Utils::OPTION) ) {
         return;
     }
 

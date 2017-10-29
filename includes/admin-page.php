@@ -9,7 +9,7 @@ class Admin_Page
 {
     function __construct()
     {
-        $page = new WP_Admin_Page( Utils::SETTINGS );
+        $page = new WP_Admin_Page( Utils::OPTION );
         $page->set_args( array(
             'parent'      => false,
             'icon_url'    => 'dashicons-external',
@@ -227,7 +227,7 @@ class Admin_Page
      */
     function page_render() {
         $table = new List_Table();
-        $table->set_fields( array('post_type' => Utils::SETTINGS) );
+        $table->set_fields( array('post_type' => Utils::OPTION) );
         $table->prepare_items();
         ?>
 
@@ -237,7 +237,7 @@ class Admin_Page
         <!-- Now we can render the completed list table -->
         <?php
         $table->display();
-        $create_link = get_admin_url() . 'post-new.php?post_type=' . Utils::SETTINGS;
+        $create_link = get_admin_url() . 'post-new.php?post_type=' . Utils::OPTION;
         ?>
         <!-- </form> -->
         <a href="<?php echo $create_link ?>" class="button button-primary" style="margin-top: 5px;">Добавить</a>
