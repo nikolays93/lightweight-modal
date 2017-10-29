@@ -138,6 +138,8 @@ class Utils
         switch ( $path ) {
             default: $result .= '/' . $path;
         }
+
+        return $result;
     }
 
     /**
@@ -164,7 +166,7 @@ class Utils
         return self::load_file_if_exists( self::get_plugin_dir('settings') . '/' . $filename );
     }
 
-    function enqueue_modal_scripts()
+    static function enqueue_modal_scripts()
     {
         $assets = self::get_plugin_url('assets');
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '.min' : '';
