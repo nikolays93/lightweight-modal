@@ -10,18 +10,18 @@ function register_modal_types(){
     register_post_type( Utils::OPTION, array(
         'label'  => null,
         'labels' => array(
-            'name'               => __( 'Всплывающие окна', LANG ),
-            'singular_name'      => __( 'Всплывающее окно', LANG ),
-            'add_new'            => __( 'Добавить всплывающее окно', LANG ),
-            'add_new_item'       => __( 'Добавление всплывающего окна', LANG ),
-            'edit_item'          => __( 'Редактирование всплывающего окна', LANG ),
-            'new_item'           => __( 'Новое всплывающее окно', LANG ),
-            'view_item'          => __( 'Смотреть всплывающее окно', LANG ),
-            'search_items'       => __( 'Искать всплывающее окно', LANG ),
-            'not_found'          => __( 'Не найдено', LANG ),
-            'not_found_in_trash' => __( 'Не найдено в корзине', LANG ),
+            'name'               => __( 'Всплывающие окна', DOMAIN ),
+            'singular_name'      => __( 'Всплывающее окно', DOMAIN ),
+            'add_new'            => __( 'Добавить всплывающее окно', DOMAIN ),
+            'add_new_item'       => __( 'Добавление всплывающего окна', DOMAIN ),
+            'edit_item'          => __( 'Редактирование всплывающего окна', DOMAIN ),
+            'new_item'           => __( 'Новое всплывающее окно', DOMAIN ),
+            'view_item'          => __( 'Смотреть всплывающее окно', DOMAIN ),
+            'search_items'       => __( 'Искать всплывающее окно', DOMAIN ),
+            'not_found'          => __( 'Не найдено', DOMAIN ),
+            'not_found_in_trash' => __( 'Не найдено в корзине', DOMAIN ),
             // 'parent_item_colon'  => '',
-            // 'menu_name'          __( => 'Всплывающие окна', LANG ),
+            // 'menu_name'          __( => 'Всплывающие окна', DOMAIN ),
         ),
         'description'         => '',
         'public'              => false,
@@ -49,7 +49,7 @@ function register_modal_types(){
 
 $mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
 $mb->add_fields( array('_modal_type',)); //'_selector') );
-$mb->add_box( __( 'Настройки модального окна', LANG ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
+$mb->add_box( __( 'Настройки модального окна', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
 function modal_post_metabox() {
     global $post;
 

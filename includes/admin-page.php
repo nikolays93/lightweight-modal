@@ -22,7 +22,7 @@ class Admin_Page
             'columns'     => 2,
             ) );
 
-        $page->add_metabox( 'lib_settings', __( 'Lib settings', LANG ), array($this, 'lib_metabox'), 'side' );
+        $page->add_metabox( 'lib_settings', __( 'Lib settings', DOMAIN ), array($this, 'lib_metabox'), 'side' );
         $page->set_metaboxes();
     }
 

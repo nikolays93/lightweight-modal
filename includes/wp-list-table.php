@@ -65,13 +65,13 @@ class List_Table extends \WP_List_Table {
     {
         $columns = array(
             'cb'           => '<input type="checkbox" />',
-            'post_title'   => __( 'Title', LANG ),
-            'shortcode'    => __( 'Shortcode', LANG ),
-            '_count'       => __( 'Click Count', LANG ),
+            'post_title'   => __( 'Title', DOMAIN ),
+            'shortcode'    => __( 'Shortcode', DOMAIN ),
+            '_count'       => __( 'Click Count', DOMAIN ),
             // '_selector' => 'Selector',
             // '_theme'    => 'Design',
-            'post_author'  => __( 'Author', LANG ),
-            'post_date'    => __( 'Date', LANG ),
+            'post_author'  => __( 'Author', DOMAIN ),
+            'post_date'    => __( 'Date', DOMAIN ),
             );
 
         return $columns;
@@ -143,7 +143,7 @@ class List_Table extends \WP_List_Table {
             Utils::SC_NAME,
             $item['ID'],
             $item['post_title'],
-            __( 'Open', LANG ),
+            __( 'Open', DOMAIN ),
             $onclick,
             $styles );
     }
