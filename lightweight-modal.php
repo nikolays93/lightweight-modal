@@ -36,6 +36,7 @@ class Utils
 
     private static function include_required_classes()
     {
+        $dir_inc = self::get_plugin_dir('includes');
         $classes = array(
             __NAMESPACE__ . '\List_Table'         => '/wp-list-table.php',
             __NAMESPACE__ . '\WP_Admin_Page'      => '/classes/wp-admin-page.php',
@@ -45,14 +46,14 @@ class Utils
 
         foreach ($classes as $classname => $dir) {
             if( ! class_exists($classname) ) {
-                self::load_file_if_exists( self::get_plugin_dir('includes') . $dir );
+                self::load_file_if_exists( $dir_inc . $dir );
             }
         }
 
         // includes
-        self::load_file_if_exists( self::get_plugin_dir('includes') . '/register-post-type.php' );
-        self::load_file_if_exists( self::get_plugin_dir('includes') . '/shortcode.php' );
-        self::load_file_if_exists( self::get_plugin_dir('includes') . '/admin-page.php' );
+        self::load_file_if_exists( $dir_inc . '/register-post-type.php' );
+        self::load_file_if_exists( $dir_inc . '/shortcode.php' );
+        self::load_file_if_exists( $dir_inc . '/admin-page.php' );
     }
 
     public static function initialize()
@@ -65,7 +66,8 @@ class Utils
         self::include_required_classes();
 
         self::$posts = get_posts( array( 'post_type' => self::OPTION ) );
-        add_action( 'wp_enqueue_scripts', array(__CLASS__, 'enqueue_modal_scripts') );
+        add_action( 'wp_enqueue_scripts',
+            array(__CLASS__, 'enqueue_modal_scripts') );
 
         self::$initialized = true;
     }
@@ -92,7 +94,7 @@ class Utils
     /**
      * Загружаем файл если существует
      */
-    public static function load_file_if_exists( $file_array )
+    public static function load_file_if_exists( $file_array, $once = false )
     {
         $cant_be_loaded = __('The file %s can not be included', DOMAIN);
         if( is_array( $file_array ) ) {
@@ -103,7 +105,7 @@ class Utils
                     continue;
                 }
 
-                $result[] = include_once( $path );
+                $result[] = ( $once ) ? include_once( $path ) : include( $path );
             }
         }
         else {
@@ -112,7 +114,7 @@ class Utils
                 return false;
             }
 
-            $result = include_once( $file_array );
+            $result[] = ( $once ) ? include_once( $file_array ) : include( $file_array );
         }
 
         return $result;
@@ -157,13 +159,15 @@ class Utils
             return $default;
         }
 
-        return isset( self::$settings[ $prop_name ] ) ? self::$settings[ $prop_name ] : $default;
+        return isset( self::$settings[ $prop_name ] )
+            ? self::$settings[ $prop_name ] : $default;
     }
 
     public static function get_settings( $filename )
     {
 
-        return self::load_file_if_exists( self::get_plugin_dir('settings') . '/' . $filename );
+        return self::load_file_if_exists(
+            self::get_plugin_dir('settings') . '/' . $filename );
     }
 
     static function enqueue_modal_scripts()
@@ -176,7 +180,8 @@ class Utils
             ) );
 
         if( sizeof(self::$posts) >= 1 || $props['modal_selector'] ) {
-            wp_enqueue_script( 'modal_script', $assets . '/public.js', array('jquery'), '1.0', true );
+            wp_enqueue_script( 'modal_script', $assets . '/public.js',
+                array('jquery'), '1.0', true );
         }
 
         // if( $props['modal_selector'] ) {
@@ -195,6 +200,7 @@ class Utils
                 '3.0'
                 );
         }
+
         wp_localize_script( 'modal_script', 'SModals', $props );
         wp_localize_script( 'modal_script', 'SM_Settings', array(
             'ajax_url' => admin_url('admin-ajax.php'),
