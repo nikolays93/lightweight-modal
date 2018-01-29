@@ -49,12 +49,70 @@ function register_modal_types(){
 
 $mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
 $mb->add_fields( array('_modal_type',)); //'_selector') );
-$mb->add_box( __( 'Настройки модального окна', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
+
+
+$mb->add_box( __( 'Дополнительные настройки', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
+
+$mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
+$mb->add_fields( array('_selector', '_trigger'));
+$mb->add_box( __( 'Событие', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox2', $side = true );
+
+function modal_post_metabox2() {
+    global $post;
+
+    $shortcode_name = Utils::get_shortcode_name();
+    $shortcode = '['.$shortcode_name.' id="'.$post->ID.'"]Открыть[/'.$shortcode_name.']';
+    $data = array(
+        array(
+            'id'    => '_trigger_type',
+            'type'  => 'select',
+            // 'label' => 'Trigger',
+            'input_class' => 'widefat button',
+            'options' => array(
+                'shortcode' => 'При нажатии при помощи ShortCode',
+                'selector'  => 'При нажатии по селектору',
+                'onload'    => 'При загрузке страницы, через (сек)',
+                'onload'    => 'При попытке закрыть вкладку',
+                ),
+            'desc'  => '',
+            ),
+        array(
+            'id'    => '_trigger',
+            'type'  => 'text',
+            // 'label' => 'Селектор',
+            'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
+            'input_class' => 'widefat',
+            'custom_attributes' => array(
+                'onclick' => 'select(this)',
+                ),
+            'value' => $shortcode,
+            ),
+        array(
+            'id'    => '_trigger',
+            'type'  => 'number',
+            'label' => '<strong>После, запретить показ на</strong>',
+            'desc'  => 'Введите колличество часов, открытие окна на протяжении которых будет отключено',
+            'custom_attributes' => array(
+                'onclick' => 'select(this)',
+                'style' => 'width: 50px; float: right;',
+                'min' => 0,
+                ),
+            'placeholder' => '0',
+            ),
+        );
+
+    $form = new WP_Admin_Forms( $data, false, $args = array(
+            'admin_page' => false,
+            'postmeta' => true,
+        ) );
+    echo $form->render();
+}
+
 function modal_post_metabox() {
     global $post;
 
+    // @todo: Активно до:
     $data = array(
-            // id or name - required
         array(
             'id'    => '_modal_type',
             'type'  => 'select',
@@ -86,14 +144,11 @@ function modal_post_metabox() {
     // var_dump( $form->get_active() );
     echo $form->render();
 }
-
-add_action( 'edit_form_after_title', __NAMESPACE__ . '\do_something_after_title', 10, 1 );
-function do_something_after_title( $post ) {
-    $scr = get_current_screen();
-    if ( $scr->post_type !== strtolower(Utils::OPTION) ) {
-        return;
-    }
-
-    $sc = '[smodal title="'.$post->post_title.'" id="'.$post->ID.'"] Открыть [/smodal]';
-    echo '<input type="text" name="" class="widefat" value=\''.$sc.'\' onclick="select()">';
-}
+// add_action( 'edit_form_after_title', __NAMESPACE__ . '\do_something_after_title', 10, 1 );
+// function do_something_after_title( $post ) {
+//     $scr = get_current_screen();
+//     if ( $scr->post_type !== strtolower(Utils::OPTION) ) {
+//         return;
+//     }
+//     echo '<input type="text" name="" class="widefat" value=\''.$sc.'\' onclick="select()">';
+// }

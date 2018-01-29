@@ -3,7 +3,7 @@
 namespace CDevelopers\modal;
 
 if ( ! defined( 'ABSPATH' ) )
-  exit; // disable direct access
+    exit; // disable direct access
 
 class Admin_Page
 {
@@ -26,6 +26,12 @@ class Admin_Page
         $page->set_metaboxes();
     }
 
+    function _assets()
+    {
+        // wp_enqueue_style();
+        // wp_enqueue_script();
+    }
+
     /**
      * Тело метабокса вызваное функций $this->add_metabox
      *
@@ -34,14 +40,6 @@ class Admin_Page
      */
     function lib_metabox()
     {
-        $animates = array(
-            'fancybox' => array(
-                'none'    => 'Без эффекта',
-                "elastic" => 'Эластичность',
-                "fade"    => 'Угасание',
-                )
-            );
-
         $modal_types = array(
             ''          => 'Не использовать',
             // 'fancybox2' => 'Fancybox 2',
@@ -49,71 +47,6 @@ class Admin_Page
             // 'magnific'   => 'Magnific Popup',
             // 'photoswipe' => 'PhotoSwipe',
             // 'lightgallery' => https://sachinchoolur.github.io/lightgallery.js/
-            );
-
-        $modal['fancybox2'] = array(
-            array(
-              'type'    => 'select',
-              'id'      => 'lib_props][modal_type',
-              'label'   => 'Библиотека',
-              'options' => $modal_types,
-              'value'   => 'fancybox2',
-              ),
-            array(
-              'type'        => 'text',
-              'id'          => 'lib_props][modal_selector',
-              'label'       => 'Селектор',
-              // 'desc'        => 'Модальное окно (Галерея, всплывающее окно)',
-              'placeholder' => '.fancybox, .zoom',
-              'custom_attributes' => array(
-                'onclick' => 'select()',
-              ),
-            ),
-            array(
-              'type'      => 'checkbox',
-              'id'        => 'lib_props][thumb',
-              'label'     => 'Показывать превью',
-              'desc'      => 'Показывать превью, если определена галерея атрибутом rel',
-              ),
-            array(
-              'type'      => 'checkbox',
-              'id'        => 'lib_props][fancybox_mousewheel',
-              'label'     => 'Прокрутка мышью',
-              'desc'      => 'Прокручивать изображения в fancybox окне колесом мыши',
-              ),
-            array(
-              'type'      => 'select',
-              'id'        => 'lib_props][openEffect',
-              'label'     => 'Анимация при открытии',
-              'options'   => $animates['fancybox'],
-              'defaults'  => 'elastic',
-              ),
-            array(
-              'type'      => 'select',
-              'id'        => 'lib_props][closeEffect',
-              'label'     => 'Анимация при закрытии',
-              'options'   => $animates['fancybox'],
-              'defaults'  => 'elastic',
-              ),
-            array(
-              'type'      => 'select',
-              'id'        => 'lib_props][nextEffect',
-              'label'     => 'Эфект при перелистывании вперед',
-              'options'   => $animates['fancybox'],
-              'defaults'  => 'fade',
-              ),
-            array(
-              'type'      => 'select',
-              'id'        => 'lib_props][prevEffect',
-              'label'     => 'Эфект при перелистывании назад',
-              'options'   => $animates['fancybox'],
-              'defaults'  => 'fade',
-              ),
-            array(
-              'type'    => 'html',
-              'id'      => 'for_group',
-              'value'   => 'Для группировки объектов используйте одинаковый <em>rel</em>'
-              ),
             );
 
         // revisions-next

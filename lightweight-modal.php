@@ -4,7 +4,7 @@
 Plugin Name: Легкие модальные (всплывающие) окна
 Plugin URI: https://github.com/nikolays93/lightweight-modal
 Description: Модальные окна для создания галерей, всплывающих форм и сообщений
-Version: 1.1.2 beta
+Version: 0.1.3 (development)
 Author: NikolayS93
 Author URI: https://vk.com/nikolays_93
 Author EMAIL: nikolayS93@ya.ru
@@ -17,43 +17,50 @@ namespace CDevelopers\modal;
 if ( ! defined( 'ABSPATH' ) )
   exit; // disable direct access
 
-const DOMAIN = 'lightweight-modal';
+const DOMAIN = '_plugin';
 
 class Utils
 {
-    const OPTION  = 'lw-modal';
-    const SC_NAME = 'lw-modal';
+    const OPTION = 'lw-modal';
 
-    public static $posts, $active_modals = array();
-
-    private static $initialized;
-    private static $settings;
+    private static $settings, $initialized, $posts;
     private function __construct() {}
     private function __clone() {}
 
-    static function activate() { add_option( self::OPTION, array() ); }
-    static function uninstall() { delete_option(self::OPTION); }
+    static function activate() {
+        add_option( self::OPTION, array() );
+    }
+
+    static function uninstall() {
+        delete_option(self::OPTION);
+    }
+
+    static function get_shortcode_name() {
+        return apply_filters( 'lightweight-modal-shortcode-name', self::OPTION );
+    }
 
     private static function include_required_classes()
     {
-        $dir_inc = self::get_plugin_dir('includes');
+        $dir_include = self::get_plugin_dir('includes');
+        $dir_class = self::get_plugin_dir('classes');
+
         $classes = array(
-            __NAMESPACE__ . '\List_Table'         => '/wp-list-table.php',
-            __NAMESPACE__ . '\WP_Admin_Page'      => '/classes/wp-admin-page.php',
-            __NAMESPACE__ . '\WP_Admin_Forms'     => '/classes/wp-admin-forms.php',
-            __NAMESPACE__ . '\WP_Post_Boxes'      => '/classes/wp-post-boxes.php',
-            );
+            __NAMESPACE__ . '\Example_List_Table' => $dir_include . '/wp-list-table.php',
+            __NAMESPACE__ . '\WP_Admin_Page'      => $dir_class . '/wp-admin-page.php',
+            __NAMESPACE__ . '\WP_Admin_Forms'     => $dir_class . '/wp-admin-forms.php',
+            __NAMESPACE__ . '\WP_Post_Boxes'      => $dir_class . '/wp-post-boxes.php',
+        );
 
         foreach ($classes as $classname => $dir) {
             if( ! class_exists($classname) ) {
-                self::load_file_if_exists( $dir_inc . $dir );
+                self::load_file_if_exists( $dir );
             }
         }
 
         // includes
-        self::load_file_if_exists( $dir_inc . '/register-post-type.php' );
-        self::load_file_if_exists( $dir_inc . '/shortcode.php' );
-        self::load_file_if_exists( $dir_inc . '/admin-page.php' );
+        self::load_file_if_exists( $dir_include . '/register-post-type.php' );
+        self::load_file_if_exists( $dir_include . '/shortcode.php' );
+        self::load_file_if_exists( $dir_include . '/admin-page.php' );
     }
 
     public static function initialize()
@@ -86,15 +93,21 @@ class Utils
         $date = new \DateTime();
         $date_str = $date->format(\DateTime::W3C);
 
-        $handle = fopen(__DIR__ . "/debug.log", "a+");
-        fwrite($handle, "[{$date_str}] {$msg} ({$dir})\r\n");
-        fclose($handle);
+        if( $handle = @fopen(__DIR__ . "/debug.log", "a+") ) {
+            fwrite($handle, "[{$date_str}] {$msg} ({$dir})\r\n");
+            fclose($handle);
+        }
+        elseif (defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY) {
+            echo sprintf( __('Can not have access the file %s (%s)', DOMAIN),
+                __DIR__ . "/debug.log",
+                $dir );
+        }
     }
 
     /**
      * Загружаем файл если существует
      */
-    public static function load_file_if_exists( $file_array, $once = false )
+    public static function load_file_if_exists( $file_array, $args = array(), $once = false, $reqire = false )
     {
         $cant_be_loaded = __('The file %s can not be included', DOMAIN);
         if( is_array( $file_array ) ) {
@@ -105,7 +118,10 @@ class Utils
                     continue;
                 }
 
-                $result[] = ( $once ) ? include_once( $path ) : include( $path );
+                if( $reqire )
+                    $result[] = ( $once ) ? require_once( $path ) : require( $path );
+                else
+                    $result[] = ( $once ) ? include_once( $path ) : include( $path );
             }
         }
         else {
@@ -114,7 +130,10 @@ class Utils
                 return false;
             }
 
-            $result[] = ( $once ) ? include_once( $file_array ) : include( $file_array );
+            if( $reqire )
+                $result = ( $once ) ? require_once( $file_array ) : require( $file_array );
+            else
+                $result = ( $once ) ? include_once( $file_array ) : include( $file_array );
         }
 
         return $result;
@@ -154,20 +173,18 @@ class Utils
 
         if( 'all' === $prop_name ) {
             if( is_array(self::$settings) && count(self::$settings) )
-                return $this->settings;
+                return self::$settings;
 
             return $default;
         }
 
-        return isset( self::$settings[ $prop_name ] )
-            ? self::$settings[ $prop_name ] : $default;
+        return isset( self::$settings[ $prop_name ] ) ? self::$settings[ $prop_name ] : $default;
     }
 
-    public static function get_settings( $filename )
+    public static function get_settings( $filename, $args = array() )
     {
 
-        return self::load_file_if_exists(
-            self::get_plugin_dir('settings') . '/' . $filename );
+        return self::load_file_if_exists( self::get_plugin_dir('settings') . '/' . $filename, $args );
     }
 
     static function enqueue_modal_scripts()
@@ -184,7 +201,6 @@ class Utils
                 array('jquery'), '1.0', true );
         }
 
-        // if( $props['modal_selector'] ) {
         if( 'fancybox3' === $props['modal_type'] ){
             wp_enqueue_script(
                 'fancybox3',
@@ -201,12 +217,11 @@ class Utils
                 );
         }
 
-        wp_localize_script( 'modal_script', 'SModals', $props );
-        wp_localize_script( 'modal_script', 'SM_Settings', array(
+        wp_localize_script( 'modal_script', 'LWModals', $props );
+        wp_localize_script( 'modal_script', 'LWM_Settings', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce( 'Secret' ),
             ) );
-        // }
     }
 }
 

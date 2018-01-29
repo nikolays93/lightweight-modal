@@ -2,7 +2,7 @@
 
 namespace CDevelopers\modal;
 
-add_shortcode( Utils::SC_NAME, __NAMESPACE__ . '\shortcode_callback' );
+add_shortcode( Utils::get_shortcode_name(), __NAMESPACE__ . '\shortcode_callback' );
 add_action( 'wp_footer', __NAMESPACE__ . '\add_modal_scaff' );
 
 add_action( 'wp_ajax_nopriv_increase_click_count', __NAMESPACE__ . '\increase_click_count' );
@@ -15,7 +15,7 @@ function shortcode_callback( $atts = array(), $content = '' ) {
         'class'   => '',
         'link_id' => '',
         'title'   => '',
-        ), $atts, Utils::SC_NAME );
+        ), $atts, Utils::get_shortcode_name() );
 
     if( ! $content || 0 >= $modal_id = absint($atts['id']) ) {
         return false;
@@ -56,8 +56,7 @@ function add_modal_scaff() {
 
 function increase_click_count() {
     if( ! wp_verify_nonce( $_POST['nonce'], 'Secret' ) ) {
-        echo "Ошибка! нарушены правила безопасности";
-        wp_die('');
+        wp_die('Ошибка! нарушены правила безопасности');
     }
 
     $modal_id = absint( $_POST['modal_id'] );
