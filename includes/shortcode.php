@@ -33,24 +33,26 @@ function shortcode_callback( $atts = array(), $content = '' ) {
 }
 
 function add_modal_scaff() {
-    foreach (Utils::$active_modals as $post_id => $title) {
-        $_post = get_post( $post_id );
+    if( $active = Utils::$active_modals && is_array($active) ) {
+        foreach ($active as $post_id => $title) {
+            $_post = get_post( $post_id );
 
-        echo "<div id='modal_{$_post->ID}' style='display: none;'>";
-        if( $title ) {
-            echo "<h2>{$title}</h2>";
-        }
-        switch ( get_post_meta( $_post->ID, '_modal_type', true ) ) {
-            case 'ajax':
+            echo "<div id='modal_{$_post->ID}' style='display: none;'>";
+            if( $title ) {
+                echo "<h2>{$title}</h2>";
+            }
+            switch ( get_post_meta( $_post->ID, '_modal_type', true ) ) {
+                case 'ajax':
                 echo '<div style="min-width: 400px;" id="ajax_data_'.$_post->ID.'"> '. __( 'Loading..' ) .' </div>';
-            break;
+                break;
 
-            case 'inline':
-            default:
+                case 'inline':
+                default:
                 echo apply_filters( 'the_content', $_post->post_content );
-            break;
+                break;
+            }
+            echo "</div>";
         }
-        echo "</div>";
     }
 }
 

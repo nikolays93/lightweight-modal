@@ -24,6 +24,8 @@ class Utils
     const OPTION = 'lw-modal';
 
     private static $settings, $initialized, $posts;
+    public static $active_modals = array();
+
     private function __construct() {}
     private function __clone() {}
 
