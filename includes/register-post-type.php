@@ -51,20 +51,49 @@ add_action('admin_enqueue_scripts', __NAMESPACE__ . '\register_modal_admin_scrip
 function register_modal_admin_script() {
     $screen = get_current_screen();
     if( !empty($screen->post_type) && Utils::OPTION === $screen->post_type ) {
-        wp_enqueue_script( 'admin_modal_post_type', Utils::get_plugin_url('assets/admin-post-type.js') );
+        wp_enqueue_script( 'admin_modal_post_type', Utils::get_plugin_url('assets/admin-post-type.js'), array('jquery') );
     }
 
 }
 
 $mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
-$mb->add_fields( array('_modal_type',)); //'_selector') );
-
-
-$mb->add_box( __( 'Дополнительные настройки', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
-
-$mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
 $mb->add_fields( array('_selector', '_trigger'));
 $mb->add_box( __( 'Событие', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox2', $side = true );
+
+$mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
+$mb->add_fields( array('_modal_type',)); //'_selector') );
+$mb->add_box( __( 'Дополнительные настройки', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
+
+function modal_post_metabox() {
+    global $post;
+
+    // @todo: Активно до:
+    $data = array(
+        array(
+            'id'    => '_modal_type',
+            'type'  => 'select',
+            'label' => 'Тип: <br>',
+            'input_class' => 'button right',
+            'options' => array(
+                'inline' => 'Прятать на странице',
+                // 'ajax'   => 'Загружать при открытии',
+                // 'iframe' => 'Cодержимое iframe'
+            ),
+        ),
+        // array(
+        //     'id'    => '_modal_type',
+        //     'type'  => 'text',
+        //     'label' => '<nobr>Активно до:</nobr>',
+        //     'input_class' => 'button right',
+        // ),
+    );
+
+    $form = new WP_Admin_Forms( $data, true, $args = array(
+        'admin_page'  => false,
+        'postmeta' => true,
+    ) );
+    echo $form->render();
+}
 
 function modal_post_metabox2() {
     global $post;
@@ -90,7 +119,7 @@ function modal_post_metabox2() {
             'id'    => '_shortcode',
             'type'  => 'text',
             // 'label' => 'Селектор',
-            'desc'  => 'Скопируйте код выше на нужную страницу или используйте echo do_shortcode("код выше");',
+            'desc'  => 'Скопируйте код выше на нужную страницу или используйте <br><big>echo do_shortcode("код выше");</big>',
             'input_class' => 'widefat',
             'custom_attributes' => array(
                 'onclick' => 'select(this)',
@@ -102,6 +131,7 @@ function modal_post_metabox2() {
             'type'  => 'text',
             'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
             'input_class' => 'widefat',
+            'placeholder' => '#selector',
             'custom_attributes' => array(
                 'onclick' => 'select(this)',
                 ),
@@ -111,6 +141,7 @@ function modal_post_metabox2() {
             'type'  => 'text',
             'desc'  => 'Введите CSS/jQuery селектор для события "Focus"',
             'input_class' => 'widefat',
+            'placeholder' => '.selector',
             'custom_attributes' => array(
                 'onclick' => 'select(this)',
                 ),
@@ -125,7 +156,7 @@ function modal_post_metabox2() {
                 ),
             ),
         array(
-            'id'    => '_trigger',
+            'id'    => '_disable_ontime',
             'type'  => 'number',
             'label' => '<strong>После, запретить показ на</strong>',
             'desc'  => 'Введите колличество часов, открытие окна на протяжении которых будет отключено',
@@ -145,42 +176,7 @@ function modal_post_metabox2() {
     echo $form->render();
 }
 
-function modal_post_metabox() {
-    global $post;
 
-    // @todo: Активно до:
-    $data = array(
-        array(
-            'id'    => '_modal_type',
-            'type'  => 'select',
-            'label' => 'Тип: <br>',
-            'input_class' => 'button right',
-                // 'desc'  => 'Enter CSS Selector for onclick event',
-            'options' => array(
-                'inline' => 'Прятать на странице',
-                // 'ajax'   => 'Загружать при открытии',
-                // 'iframe' => 'Cодержимое iframe'
-            ),
-        ),
-        // array(
-        //     'id'    => '_selector',
-        //     'type'  => 'text',
-        //     'label' => 'Селектор',
-        //     'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
-        // ),
-    );
-
-    $form = new WP_Admin_Forms( $data, true, $args = array(
-            'admin_page'  => false,
-            // 'item_wrap'   => array('<p>', '</p>'),
-            // 'form_wrap'   => array('', ''),
-            // 'label_tag'   => 'th',
-            // 'hide_desc'   => false,
-            'postmeta' => true,
-        ) );
-    // var_dump( $form->get_active() );
-    echo $form->render();
-}
 // add_action( 'edit_form_after_title', __NAMESPACE__ . '\do_something_after_title', 10, 1 );
 // function do_something_after_title( $post ) {
 //     $scr = get_current_screen();

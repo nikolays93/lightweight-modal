@@ -11,7 +11,7 @@ add_action( 'wp_ajax_increase_click_count', __NAMESPACE__ . '\increase_click_cou
 function shortcode_callback( $atts = array(), $content = '' ) {
     $atts = shortcode_atts( array(
         'id'      => 0,
-        'href'    => '#',
+        'href'    => '',
         'class'   => '',
         'link_id' => '',
         'title'   => '',
@@ -23,17 +23,18 @@ function shortcode_callback( $atts = array(), $content = '' ) {
 
     Utils::$active_modals[$modal_id] = esc_html( $atts['title'] );
 
-    return sprintf('<a href="%1$s" data-fancybox data-modal-id="%2$d" data-src="#modal_%2$d" id="%3$s" class="%4$s" href="javascript:;">%5$s</a>',
-        esc_url( $atts['href'] ),
+    return sprintf('<a href="%1$s" data-fancybox data-modal-id="%2$d" data-src="#modal_%2$d"%3$s%4$s>%5$s</a>',
+        $atts['href'] ? esc_url( $atts['href'] ) : 'javascript:;',
         $modal_id,
-        esc_attr( $atts['link_id'] ),
-        esc_attr( $atts['class'] ),
+        $atts['link_id'] ? sprintf(' id="%s"', esc_attr( $atts['link_id'] )) : '',
+        $atts['class'] ? sprintf(' class="%s"', esc_attr( $atts['class'] )) : '',
         $content
         );
 }
 
 function add_modal_scaff() {
-    if( $active = Utils::$active_modals && is_array($active) ) {
+    $active = Utils::$active_modals;
+    if( is_array($active) ) {
         foreach ($active as $post_id => $title) {
             $_post = get_post( $post_id );
 

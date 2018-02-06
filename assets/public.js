@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     if( LWModals.modal_selector ){
-        if( LWModals.modal_type == 'fancybox3' ){
+        // if( LWModals.modal_type == 'fancybox3' ){
             $( LWModals.modal_selector ).each(function(index, el) {
                 $(this).attr('data-fancybox', $(this).attr('rel') );
             });
@@ -9,19 +9,7 @@ jQuery(document).ready(function($) {
                 animationEffect : LWModals.openCloseEffect,
                 transitionEffect : LWModals.nextPrevEffect,
             });
-        }
-        else if(LWModals.modal_type) {
-            var fancyModal = $( LWModals.modal_selector ).fancybox({
-                openEffect : LWModals.openEffect,
-                closeEffect : LWModals.closeEffect,
-                nextEffect : LWModals.nextEffect,
-                prevEffect : LWModals.prevEffect,
-                helpers: {
-                    title : { type : 'inside' },
-                    thumbs : LWModals.thumb ? { width: 120, height: 80 } : false
-                }
-            });
-        }
+        // }
     }
 
     $('[data-modal-id]').on('click', function(event) {
