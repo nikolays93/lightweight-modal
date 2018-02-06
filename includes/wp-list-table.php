@@ -140,7 +140,7 @@ class List_Table extends \WP_List_Table {
             max-width: 100%;';
 
         return sprintf('<input type="text" value=\'[%1$s id="%2$d" title="%3$s"]%4$s[/%1$s]\' onclick="%5$s" style="%6$s">',
-            Utils::SC_NAME,
+            Utils::get_shortcode_name(),
             $item['ID'],
             $item['post_title'],
             __( 'Open', DOMAIN ),

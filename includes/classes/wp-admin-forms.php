@@ -212,7 +212,7 @@ class WP_Admin_Forms {
         $template.= $desc;
 
         if( ! $this->is_table ){
-            $html[] = $template;
+            $html[] = '<section id="'.$field['id'].'-wrap">' . $template . '</section>';
         }
         elseif( $field['type'] == 'hidden' ){
             $this->hiddens[] = $input;

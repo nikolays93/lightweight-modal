@@ -47,6 +47,15 @@ function register_modal_types(){
     ) );
 }
 
+add_action('admin_enqueue_scripts', __NAMESPACE__ . '\register_modal_admin_script');
+function register_modal_admin_script() {
+    $screen = get_current_screen();
+    if( !empty($screen->post_type) && Utils::OPTION === $screen->post_type ) {
+        wp_enqueue_script( 'admin_modal_post_type', Utils::get_plugin_url('assets/admin-post-type.js') );
+    }
+
+}
+
 $mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
 $mb->add_fields( array('_modal_type',)); //'_selector') );
 
@@ -69,23 +78,51 @@ function modal_post_metabox2() {
             // 'label' => 'Trigger',
             'input_class' => 'widefat button',
             'options' => array(
-                'shortcode' => 'При нажатии при помощи ShortCode',
-                'selector'  => 'При нажатии по селектору',
-                'onload'    => 'При загрузке страницы, через (сек)',
-                'onload'    => 'При попытке закрыть вкладку',
+                'shortcode' => 'При нажатии на контент shortcode\'а',
+                'onclick' => 'При нажатии по селектору',
+                'onfocus' => 'При навидении на селектор',
+                'onload' => 'При загрузке страницы, через (сек)',
+                'onclose' => 'При попытке закрыть вкладку',
                 ),
             'desc'  => '',
             ),
         array(
-            'id'    => '_trigger',
+            'id'    => '_shortcode',
             'type'  => 'text',
             // 'label' => 'Селектор',
-            'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
+            'desc'  => 'Скопируйте код выше на нужную страницу или используйте echo do_shortcode("код выше");',
             'input_class' => 'widefat',
             'custom_attributes' => array(
                 'onclick' => 'select(this)',
                 ),
             'value' => $shortcode,
+            ),
+        array(
+            'id'    => '_onclick',
+            'type'  => 'text',
+            'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
+            'input_class' => 'widefat',
+            'custom_attributes' => array(
+                'onclick' => 'select(this)',
+                ),
+            ),
+        array(
+            'id'    => '_onfocus',
+            'type'  => 'text',
+            'desc'  => 'Введите CSS/jQuery селектор для события "Focus"',
+            'input_class' => 'widefat',
+            'custom_attributes' => array(
+                'onclick' => 'select(this)',
+                ),
+            ),
+        array(
+            'id'    => '_onload',
+            'type'  => 'text',
+            'desc'  => 'Введите время (колличество секунд), через которое открыть окно после загрузки страницы',
+            'input_class' => 'widefat',
+            'custom_attributes' => array(
+                'onclick' => 'select(this)',
+                ),
             ),
         array(
             'id'    => '_trigger',
