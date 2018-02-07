@@ -141,7 +141,7 @@ class WP_Admin_Forms {
         if( $this->args['postmeta'] ){
             global $post;
 
-            if( ! $post instanceof WP_Post ) {
+            if( ! is_a($post, 'WP_Post')  ) {
                 return false;
             }
 

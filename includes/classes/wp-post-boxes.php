@@ -115,13 +115,6 @@ class WP_Post_Boxes {
 		if ( ! isset( $_POST['_wp_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['_wp_metabox_nonce'], self::SECURITY ) )
 			return $post_id;
 
-		// $test = array();
-		// $test['post'] = $_POST;
-		// $test['metas'] = $this->meta_fields;
-		// file_put_contents(__DIR__ . '/meta_debug.log', print_r($test, 1));
-		// if ( ! current_user_can( 'edit_page', $post_id ) )
-		// 	return $post_id;
-
 		foreach ($this->meta_fields as $field) {
 			if( ! empty($_POST[$field]) ){
 				$meta = is_array($_POST[$field]) ?

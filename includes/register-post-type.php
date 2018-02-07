@@ -56,8 +56,27 @@ function register_modal_admin_script() {
 
 }
 
+add_action( 'save_post', __NAMESPACE__ . '\save_trigger_field' );
+function save_trigger_field( $post_id ) {
+    if ( ! isset( $_POST['_wp_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['_wp_metabox_nonce'], WP_Post_Boxes::SECURITY ) )
+        return $post_id;
+
+    $trigger = '';
+    if( !empty( $_POST['_shortcode'] ) ) $trigger = $_POST['_shortcode'];
+    if( !empty( $_POST['_onclick'] ) ) $trigger = $_POST['_onclick'];
+    if( !empty( $_POST['_onload'] ) ) $trigger = $_POST['_onload'];
+    if( !empty( $_POST['_onclose'] ) ) $trigger = $_POST['_onclose'];
+
+    if( $trigger ) {
+        update_post_meta( $post_id, '_trigger', sanitize_text_field($trigger) );
+    }
+    else {
+        delete_post_meta( $post_id, '_trigger' );
+    }
+}
+
 $mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
-$mb->add_fields( array('_selector', '_trigger'));
+$mb->add_fields( array('_trigger_type', '_disable_ontime') );
 $mb->add_box( __( 'Событие', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox2', $side = true );
 
 $mb = new WP_Post_Boxes( array( strtolower(Utils::OPTION) ) );
@@ -109,7 +128,6 @@ function modal_post_metabox2() {
             'options' => array(
                 'shortcode' => 'При нажатии на контент shortcode\'а',
                 'onclick' => 'При нажатии по селектору',
-                'onfocus' => 'При навидении на селектор',
                 'onload' => 'При загрузке страницы, через (сек)',
                 'onclose' => 'При попытке закрыть вкладку',
                 ),
@@ -132,16 +150,6 @@ function modal_post_metabox2() {
             'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
             'input_class' => 'widefat',
             'placeholder' => '#selector',
-            'custom_attributes' => array(
-                'onclick' => 'select(this)',
-                ),
-            ),
-        array(
-            'id'    => '_onfocus',
-            'type'  => 'text',
-            'desc'  => 'Введите CSS/jQuery селектор для события "Focus"',
-            'input_class' => 'widefat',
-            'placeholder' => '.selector',
             'custom_attributes' => array(
                 'onclick' => 'select(this)',
                 ),
@@ -173,6 +181,11 @@ function modal_post_metabox2() {
             'admin_page' => false,
             'postmeta' => true,
         ) );
+
+    $actve = $form->get_active();
+    $actve[ '_' . $actve['_trigger_type'] ] = get_post_meta( $post->ID, '_trigger', true );
+    $form->set_active($actve);
+
     echo $form->render();
 }
 

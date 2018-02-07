@@ -67,7 +67,7 @@ class List_Table extends \WP_List_Table {
             'cb'           => '<input type="checkbox" />',
             'post_title'   => __( 'Title', DOMAIN ),
             'shortcode'    => __( 'Shortcode', DOMAIN ),
-            '_count'       => __( 'Click Count', DOMAIN ),
+            '_count'       => __( 'Show Count', DOMAIN ),
             // '_selector' => 'Selector',
             // '_theme'    => 'Design',
             'post_author'  => __( 'Author', DOMAIN ),

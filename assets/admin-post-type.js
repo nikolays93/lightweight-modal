@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     $('#_trigger_type').on('change', function(event) {
-        $('#_shortcode-wrap, #_onclick-wrap, #_onfocus-wrap, #_onload-wrap, #_trigger-wrap')
+        $('#_shortcode-wrap, #_onclick-wrap, #_onfocus-wrap, #_onload-wrap, #_disable_ontime-wrap')
             .hide()
             .attr('disable', 'true');
 
@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
             .removeAttr('disable');
 
         if( $(this).val() == 'onclose' || $(this).val() == 'onload' ) {
-            $( '#_trigger-wrap' )
+            $( '#_disable_ontime-wrap' )
                 .show()
                 .removeAttr('disable');
         }

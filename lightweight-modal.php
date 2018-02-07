@@ -4,7 +4,7 @@
 Plugin Name: Легкие модальные (всплывающие) окна
 Plugin URI: https://github.com/nikolays93/lightweight-modal
 Description: Модальные окна для создания галерей, всплывающих форм и сообщений
-Version: 0.1.3 (development)
+Version: 0.2.0 (beta, development)
 Author: NikolayS93
 Author URI: https://vk.com/nikolays_93
 Author EMAIL: nikolayS93@ya.ru
@@ -17,7 +17,7 @@ namespace CDevelopers\modal;
 if ( ! defined( 'ABSPATH' ) )
   exit; // disable direct access
 
-const DOMAIN = '_plugin';
+const DOMAIN = 'lightweight-modal';
 
 class Utils
 {
@@ -198,9 +198,22 @@ class Utils
             'modal_selector' => false,
             ) );
 
-        if( sizeof(self::$posts) >= 1 || $props['modal_selector'] ) {
+        $has_modals = sizeof(self::$posts) >= 1;
+        if( $has_modals || $props['modal_selector'] ) {
             wp_enqueue_script( 'modal_script', $assets . '/public.js',
                 array('jquery'), '1.0', true );
+        }
+
+        $props['modals'] = array();
+        if( $has_modals ) {
+            foreach (self::$posts as $post) {
+                $props['modals'][ $post->ID ] = array(
+                    'trigger_type'   => get_post_meta( $post->ID, '_trigger_type', true ),
+                    'trigger'        => get_post_meta( $post->ID, '_trigger', true ),
+                    'disable_ontime' => get_post_meta( $post->ID, '_disable_ontime', true ),
+                    'modal_type'     => get_post_meta( $post->ID, '_modal_type', true ),
+                );
+            }
         }
 
         if( 'fancybox3' === $props['modal_type'] ){
