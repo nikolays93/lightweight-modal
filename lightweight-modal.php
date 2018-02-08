@@ -4,7 +4,7 @@
 Plugin Name: Легкие модальные (всплывающие) окна
 Plugin URI: https://github.com/nikolays93/lightweight-modal
 Description: Модальные окна для создания галерей, всплывающих форм и сообщений
-Version: 0.2.0 (beta, development)
+Version: 0.2.1 (beta, development)
 Author: NikolayS93
 Author URI: https://vk.com/nikolays_93
 Author EMAIL: nikolayS93@ya.ru

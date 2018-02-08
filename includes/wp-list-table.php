@@ -154,6 +154,10 @@ class List_Table extends \WP_List_Table {
         return sprintf('<a href="%s">%s</a>', get_edit_user_link( $_user->ID ), $_user->data->user_nicename );
     }
 
+    protected function column_post_date( $item ) {
+        return date(get_option('date_format'). ' ' .get_option('time_format'), strtotime($item['post_date']));
+    }
+
     /****************************** Bulk Actions ******************************/
     protected function get_bulk_actions() {
         $actions = array(
