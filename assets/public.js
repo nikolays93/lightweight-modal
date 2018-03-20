@@ -25,20 +25,26 @@ jQuery(document).ready(function($) {
         disabled = disabled ? JSON.parse( disabled ) : {};
 
         if( !ignoreCookie && index in disabled ) return;
-        $.fancybox.open({
-            src  : '#modal_' + index,
-            type : 'inline',
-            opts : {
-                afterShow : function( instance, current ) {
-                    if(!ignoreCookie) {
-                        disabled[ index ] = 1;
-                        setCookie( 'lwdisabled', JSON.stringify(disabled), {expires: 60 * 60 * val.disable_ontime} ); // hours
-                    }
+        try {
+            $.fancybox.open({
+                src  : '#modal_' + index,
+                type : 'inline',
+                opts : {
+                    afterShow : function( instance, current ) {
+                        if(!ignoreCookie) {
+                            disabled[ index ] = 1;
+                            setCookie( 'lwdisabled', JSON.stringify(disabled), {expires: 60 * 60 * val.disable_ontime} ); // hours
+                        }
 
-                    increase_click_count( index );
+                        increase_click_count( index );
+                    }
                 }
-            }
-        });
+            });
+        } catch(e) {
+            console.error('Библиотека не установленна');
+            console.log(e);
+        }
+
     }
 
     if( LWModals.modal_selector ){
