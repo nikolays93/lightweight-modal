@@ -1,139 +1,115 @@
 <?php
 
-namespace CDevelopers\modal;
+namespace NikolayS93\LWModal;
 
 if ( ! defined( 'ABSPATH' ) )
-  exit; // disable direct access
+    exit; // disable direct access
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class List_Table extends \WP_List_Table {
+class WP_List_Table extends \WP_List_Table {
 
-    protected $columns = array();
+    private $columns = array(),
+            $sortable = array(),
+            $values = array(),
+            $actions = array();
 
-    protected $fields = array();
-    protected $data = array();
-
-    public function __construct()
+    public function __construct($args = array())
     {
-        // Set parent defaults.
-        parent::__construct( array(
+        $args = wp_parse_args( $args, array(
             'singular' => 'modal',
             'plural'   => 'modals',
             'ajax'     => false,
         ) );
+
+        parent::__construct( $args );
     }
 
-    public function set_fields( $post_args = array('post_type'=>'post') )
+    /**
+     * Set: Head Row
+     */
+    public function set_columns( $columns = array() )
     {
-        $res = array();
-        $posts = get_posts( $post_args );
-        // var_dump(current( $posts ));
-
-        $columns = $this->get_columns();
-        array_shift( $columns );
-        // $columns = array_merge(array('ID' => 0), $columns);
-        $allows = array_keys( $columns );
-
-        foreach ($posts as $post) {
-            $res[$post->ID]['ID'] = $post->ID;
-            foreach ($allows as $allow) {
-                if( strpos($allow, '_') == 0 ) {
-                    $res[$post->ID][$allow] = get_post_meta( $post->ID, $allow, true );
-                }
-                elseif( isset( $post->$allow ) ) {
-                    $res[$post->ID][$allow] = $post->$allow;
-                }
-            }
-        }
-        $this->data = $res;
-        // $this->fields = $rows;
-
-        // foreach ($rows as $row) {
-        //     foreach ($row as $field_key => $field_val) {
-        //         if( in_array($field_key, $allows) ) {
-
-        //         }
-        //     }
-        // }
-    }
-
-    /** THEAD */
-    public function get_columns()
-    {
-        $columns = array(
-            'cb'           => '<input type="checkbox" />',
+        $this->columns = wp_parse_args( $columns, array(
+            'cb'     => '<input type="checkbox" />', //Render a checkbox instead of text
             'post_title'   => __( 'Title', DOMAIN ),
-            'shortcode'    => __( 'Shortcode', DOMAIN ),
-            '_count'       => __( 'Show Count', DOMAIN ),
-            // '_selector' => 'Selector',
-            // '_theme'    => 'Design',
-            'post_author'  => __( 'Author', DOMAIN ),
-            'post_date'    => __( 'Date', DOMAIN ),
-            );
+        ) );
 
-        return $columns;
+        return $this->columns;
+    }
+
+    /**
+     * required WP_List_Table method
+     */
+    public function get_columns() {
+
+        return $this->columns;
+    }
+
+    public function set_sortable_columns( $sortable )
+    {
+        $this->sortable = wp_parse_args( $sortable, array(
+            'title'  => array( 'title', false ),
+        ) );
+
+        return $this->sortable;
+    }
+
+    protected function get_sortable_columns() {
+
+        return $this->sortable;
+    }
+
+    /**
+     * Set: Body Row
+     */
+    public function set_value( $values )
+    {
+        $this->values[] = wp_parse_args( $values, array(
+            'ID'    => '',
+            'title' => '',
+        ) );
     }
 
     /********************************* Columns ********************************/
-    protected function column_default( $item, $column_name )
-    {
-        if( '_count' === $column_name && empty($item[ $column_name ]) ) {
-            return 0;
-        }
-
-        return isset( $item[ $column_name ] ) ? $item[ $column_name ] : '';
-    }
-
-    protected function column_cb( $item )
+    /**
+     * Render: Callbacks checkbox
+     */
+    function column_cb( $item )
     {
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
-            $this->_args['singular'],  // Let's simply repurpose the table's singular label ("movie").
+            $this->_args['singular'],  // Let's simply repurpose the table's singular label ("modal").
             $item['ID']                // The value of the checkbox should be the record's ID.
         );
     }
 
-    protected function column_post_title( $item )
+    /**
+     * Render: Row Title
+     */
+    function column_post_title($item)
     {
-        $page = wp_unslash( $_REQUEST['page'] ); // WPCS: Input var ok.
-
-        // Build edit row action.
-        $edit_query_args = array(
-            'page'   => $page,
-            'action' => 'edit',
-            'movie'  => $item['ID'],
+        /**
+         * @todo repair it
+         */
+        $actions = array(
+            'edit' => sprintf('<a href="/wp-admin/post.php?post=%d&action=edit">%s</a>',
+                $item['ID'],
+                esc_attr( __('Edit') )
+            ),
+            'delete' => sprintf('<a href="%s">%s</a>',
+                get_delete_post_link( $item['ID'], '', true ),
+                __('Delete')
+            ),
         );
 
-        $actions['edit'] = sprintf(
-            '<a href="%1$s">%2$s</a>',
-            get_edit_post_link( $item['ID'] ),
-            __( 'Edit' )
-        );
-
-        // Build delete row action.
-        $delete_query_args = array(
-            'page'   => $page,
-            'action' => 'delete',
-            'movie'  => $item['ID'],
-        );
-
-        $actions['delete'] = sprintf(
-            '<a href="%1$s">%2$s</a>',
-            get_delete_post_link( $item['ID'], '', true ),
-            __( 'Delete' )
-        );
-
-        // Return the title contents.
-        return sprintf( '%1$s %2$s',
-            $item['post_title'],
-            $this->row_actions( $actions )
-        );
+        return $item['post_title'] . $this->row_actions($actions);
     }
 
-    protected function column_shortcode( $item ) {
+    protected function column_shortcode( $item )
+    {
         $onclick = 'this.select();return 0;';
         $styles = '
             font-size: 12px;
@@ -148,46 +124,73 @@ class List_Table extends \WP_List_Table {
             $styles );
     }
 
-    protected function column_post_author( $item ) {
+    protected function column_post_author( $item ) 
+    {
         $_user = get_user_by( 'id', $item['post_author'] );
+        if( empty($_user->ID) ) return '';
 
         return sprintf('<a href="%s">%s</a>', get_edit_user_link( $_user->ID ), $_user->data->user_nicename );
     }
 
-    protected function column_post_date( $item ) {
-        return date(get_option('date_format'). ' ' .get_option('time_format'), strtotime($item['post_date']));
+    protected function column_post_date( $item )
+    {
+        if( empty($item['post_date']) ) return '';
+
+        $format = get_option('date_format') . ' ' . get_option('time_format');
+
+        return date( $format, strtotime($item['post_date']) );
+    }
+
+    /**
+     * Render: Columns Data
+     */
+    function column_default($item, $column_name)
+    {
+        if( '_count' === $column_name && empty($item[ $column_name ]) ) {
+            return 0;
+        }
+
+        if( isset($item[ $column_name ]) )
+            return $item[ $column_name ];
+
+        return false;
+    }
+
+    public function single_row( $item )
+    {
+        printf('<tr class="%s">',
+            !empty( $item['classrow'] ) ? $item['classrow'] : '');
+        $this->single_row_columns( $item );
+        echo '</tr>';
     }
 
     /****************************** Bulk Actions ******************************/
-    protected function get_bulk_actions() {
-        $actions = array(
+    public function set_bulk_actions( $actions = array() )
+    {
+        $this->actions = wp_parse_args( $actions, array(
             'delete' => __( 'Delete' ),
-        );
+        ) );
 
         return $actions;
     }
 
+    protected function get_bulk_actions() {
+
+        return $this->actions;
+    }
+
     protected function process_bulk_action() {
-        // Detect when a bulk action is being triggered.
         if ( 'delete' === $this->current_action() ) {
+            /**
+             * @todo set hooks
+             */
             wp_die( 'Items deleted (or they would be if we had items to delete)!' );
         }
     }
 
     /******************************** Sortable ********************************/
-    protected function get_sortable_columns() {
-        $sortable_columns = array(
-            'post_title'  => array( 'title', false ),
-            '_count'  => array( '_count', false ),
-            '_theme'  => array( '_theme', false ),
-            'post_author' => array( 'author', false ),
-            'post_date'   => array( 'post_date', false ),
-            );
-
-        return $sortable_columns;
-    }
-
-    protected function usort_reorder( $a, $b ) {
+    protected function usort_reorder( $a, $b )
+    {
         // If no sort, default to title.
         $orderby = ! empty( $_REQUEST['orderby'] ) ? wp_unslash( $_REQUEST['orderby'] ) : 'post_title'; // WPCS: Input var ok.
 
@@ -203,7 +206,6 @@ class List_Table extends \WP_List_Table {
     /**
      * Prepares the list of items for displaying.
      *
-     * @global wpdb $wpdb
      * @uses $this->_column_headers
      * @uses $this->items
      * @uses $this->get_columns()
@@ -211,8 +213,10 @@ class List_Table extends \WP_List_Table {
      * @uses $this->get_pagenum()
      * @uses $this->set_pagination_args()
      */
-    public function prepare_items() {
-        global $wpdb;
+    public function prepare_items()
+    {
+        if( !count( $this->columns ) )
+            $this->set_columns();
 
         $per_page = 20;
 
@@ -224,8 +228,7 @@ class List_Table extends \WP_List_Table {
 
         $this->process_bulk_action();
 
-        $data = $this->data;
-
+        $data = $this->values;
 
         usort( $data, array( $this, 'usort_reorder' ) );
 
@@ -237,13 +240,12 @@ class List_Table extends \WP_List_Table {
 
         $this->items = $data;
 
-        /**
-         * REQUIRED. We also have to register our pagination options & calculations.
-         */
-        $this->set_pagination_args( array(
-            'total_items' => $total_items,                     // WE have to calculate the total number of items.
-            'per_page'    => $per_page,                        // WE have to determine how many items to show on a page.
-            'total_pages' => ceil( $total_items / $per_page ), // WE have to calculate the total number of pages.
-        ) );
+        if( $total_items > $per_page ) {
+            $this->set_pagination_args( array(
+                'total_items' => $total_items,
+                'per_page'    => $per_page,
+                'total_pages' => ceil( $total_items / $per_page ),
+            ) );
+        }
     }
 }

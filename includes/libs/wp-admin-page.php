@@ -1,6 +1,6 @@
 <?php
 
-namespace CDevelopers\modal;
+namespace NikolayS93\LWModal;
 
 if ( ! defined( 'ABSPATH' ) )
   exit; // disable direct access
@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) )
  * Author URI: https://vk.com/nikolays_93
  * License: GNU General Public License v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
- *
- * @todo  : add method for tab_sections ( add tab section )
  */
 
 class WP_Admin_Page
@@ -30,7 +28,7 @@ class WP_Admin_Page
 
 	function __construct( $page_slug = false )
 	{
-		$this->page = $page_slug;
+		$this->page = sanitize_text_field( $page_slug );
 		add_action( 'admin_notices', array(__CLASS__, 'notice_tpl') );
 	}
 
@@ -278,19 +276,6 @@ class WP_Admin_Page
 
 	/**
 	 * View html on added page
-	 *
-	 * @has_hooks:
-	 * $pageslug . _after_title (default empty hook)
-	 * $pageslug . _before_form_inputs (default empty hook)
-	 * $pageslug . _inside_page_content
-	 * $pageslug . _inside_side_container
-	 * $pageslug . _inside_advanced_container
-	 * $pageslug . _after_form_inputs (default empty hook)
-	 * $pageslug . _after_page_wrap (default empty hook)
-	 *
-	 * @has_fiters
-	 * $pageslug . _form_action
-	 * $pageslug . _form_method
 	 */
 	function render_page()
 	{

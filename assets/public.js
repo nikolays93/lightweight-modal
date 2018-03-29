@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+    console.log('LW-modals activated');
     function getCookie(e){var o=document.cookie.match(new RegExp("(?:^|; )"+e.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));return o?decodeURIComponent(o[1]):void 0}
     // name, value, options.expires, options.path
     function setCookie(e,o,i){var r=(i=i||{}).expires;if("number"==typeof r&&r){var t=new Date;t.setTime(t.getTime()+1e3*r),r=i.expires=t}r&&r.toUTCString&&(i.expires=r.toUTCString());var n=e+"="+(o=encodeURIComponent(o));for(var a in i){n+="; "+a;var m=i[a];!0!==m&&(n+="="+m)}document.cookie=n}

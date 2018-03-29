@@ -1,6 +1,6 @@
 <?php
 
-namespace CDevelopers\modal;
+namespace NikolayS93\LWModal;
 
 if ( ! defined( 'ABSPATH' ) )
   exit; // disable direct access
