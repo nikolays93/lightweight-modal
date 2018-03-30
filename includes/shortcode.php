@@ -12,10 +12,6 @@ class Modal
 
     private static function push_active_bootstraps()
     {
-        echo "<pre>";
-        var_dump( self::$bootstraps );
-        echo "</pre>";
-
         self::$bootstraps += get_posts( array(
             'post_type'  => Utils::get_posttype_name(),
             'meta_query' => array(
@@ -26,10 +22,6 @@ class Modal
                 )
             )
         ) );
-
-        echo "<pre>";
-        var_dump( self::$bootstraps );
-        echo "</pre>";
     }
 
     static function shortcode( $atts = array(), $content = '' )
