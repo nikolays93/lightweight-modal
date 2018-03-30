@@ -45,14 +45,15 @@ class AdminSettingsPage
                 'ID'           => $post->ID,
                 'post_title'   => esc_html( $post->post_title ),
                 'shortcode'    => !empty($post_meta['shortcode']) ? $post_meta['shortcode'] : '',
-                '_count'       => !empty($post_meta['_count']) ? $post_meta['_count'] : '',
+                '_count'       => !empty($post_meta['_count']) && is_array($post_meta['_count'])
+                    ? current($post_meta['_count']) : '',
                 // '_selector' => 'Selector',
                 // '_theme'    => 'Design',
                 'post_author'  => $post->post_author,
                 'post_date'    => $post->post_modified,
             ) );
         }
-        
+
         $table->prepare_items();
         ?>
 

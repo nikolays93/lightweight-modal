@@ -136,7 +136,7 @@ class WP_List_Table extends \WP_List_Table {
     {
         if( empty($item['post_date']) ) return '';
 
-        $format = get_option('date_format') . ' ' . get_option('time_format');
+        $format = get_option('time_format') . ' ' . get_option('date_format');
 
         return date( $format, strtotime($item['post_date']) );
     }

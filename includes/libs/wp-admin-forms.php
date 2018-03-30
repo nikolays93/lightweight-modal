@@ -8,11 +8,13 @@ if ( ! defined( 'ABSPATH' ) )
 /**
  * Class Name: WP_Admin_Forms
  * Description: Render a custom admin forms.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: NikolayS93
  * Author URI: https://vk.com/nikolays_93
  * License: GNU General Public License v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * 1.1.0 fix active values (instanceof to is_a)
  */
 
 class WP_Admin_Forms {
@@ -149,7 +151,8 @@ class WP_Admin_Forms {
         if( $this->args['postmeta'] ){
             global $post;
 
-            if( ! $post instanceof WP_Post ) {
+            // do not use instanceof
+            if( ! is_a($post, 'WP_Post') ) {
                 return false;
             }
 
@@ -354,7 +357,7 @@ class WP_Admin_Forms {
 
                 // if $clear_value === false dont use defaults (couse default + empty value = true)
                 if( isset($clear_value) || false !== ($clear_value = self::$clear_value) ) {
-                    $input .= sprinft('<input type="hidden" name="%s" value="%s">',
+                    $input .= sprintf('<input type="hidden" name="%s" value="%s">',
                         $attributes['name'], $clear_value) . "\n";
                 }
 

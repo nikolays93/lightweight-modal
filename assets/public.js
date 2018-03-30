@@ -1,7 +1,6 @@
 jQuery(document).ready(function($) {
-    console.log('LW-modals activated');
     function getCookie(e){var o=document.cookie.match(new RegExp("(?:^|; )"+e.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));return o?decodeURIComponent(o[1]):void 0}
-    // name, value, options.expires, options.path
+    // name, value, options[expires, path]
     function setCookie(e,o,i){var r=(i=i||{}).expires;if("number"==typeof r&&r){var t=new Date;t.setTime(t.getTime()+1e3*r),r=i.expires=t}r&&r.toUTCString&&(i.expires=r.toUTCString());var n=e+"="+(o=encodeURIComponent(o));for(var a in i){n+="; "+a;var m=i[a];!0!==m&&(n+="="+m)}document.cookie=n}
 
     function increase_click_count( modal_id ) {
@@ -33,6 +32,11 @@ jQuery(document).ready(function($) {
                 opts : {
                     afterShow : function( instance, current ) {
                         if(!ignoreCookie) {
+                            /**
+                             * @todo
+                             * Записывать для каждого окна время, до когда его дизактивировать
+                             * и после сверять с существующим временем
+                             */
                             disabled[ index ] = 1;
                             setCookie( 'lwdisabled', JSON.stringify(disabled), {expires: 60 * 60 * val.disable_ontime} ); // hours
                         }
@@ -61,24 +65,29 @@ jQuery(document).ready(function($) {
         // }
     }
 
-    $.each(LWModals.modals, function(index, val) {
-        if( 'shortcode' == val.trigger_type ) return;
+    var opened = {};
+    $.each(LWModals.modals, function(modal_id, modal) {
+        if( 'shortcode' == modal.trigger_type ) return;
 
-        var ignore = val.disable_ontime <= 0;
-        switch ( val.trigger_type ) {
+        var ignore = modal.disable_ontime <= 0;
+        switch ( modal.trigger_type ) {
             case 'onclick':
-                $(val.trigger).on('click', function(event) {
-                    openLWModal(index, val, true);
+                $(modal.trigger).on('click', function(event) {
+                    openLWModal(modal_id, modal, true);
                 });
             break;
             case 'onload':
                 setTimeout(function(){
-                    openLWModal(index, val, ignore);
-                }, val.trigger * 1000 );
+                    openLWModal(modal_id, modal, ignore);
+                }, modal.trigger * 1000 );
             break;
             case 'onclose':
                 $(document).on('mouseleave', function(event) {
-                    openLWModal(index, val, ignore);
+                    var is_opened = modal_id in opened;
+                    if( !is_opened )
+                        openLWModal(modal_id, modal, ignore);
+
+                    opened[ modal_id ] = true;
                 });
             break;
       }

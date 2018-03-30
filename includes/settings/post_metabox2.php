@@ -9,6 +9,8 @@ global $post;
 
 $shortcode_name = Utils::get_shortcode_name();
 $shortcode = '['.$shortcode_name.' id="'.$post->ID.'"]Открыть[/'.$shortcode_name.']';
+$template_sc = "<big onclick='select(this)'>echo do_shortcode('<span class='no-break'>$shortcode</span>');</big>";
+
 $form = array(
     array(
         'id'    => '_trigger_type',
@@ -27,7 +29,8 @@ $form = array(
         'id'    => '_shortcode',
         'type'  => 'text',
         // 'label' => 'Селектор',
-        'desc'  => 'Скопируйте код выше на нужную страницу или используйте <br><big>echo do_shortcode("код выше");</big>',
+        'desc'  => 'Скопируйте код выше на нужную страницу или вставьте в шаблон <br>
+        ',
         'input_class' => 'widefat',
         'custom_attributes' => array(
             'onclick' => 'select(this)',

@@ -4,7 +4,7 @@
 Plugin Name: Легкие модальные (всплывающие) окна
 Plugin URI: https://github.com/nikolays93/lightweight-modal
 Description: Модальные окна для создания галерей, всплывающих форм и сообщений
-Version: 0.2.1 (beta, development)
+Version: 0.2.2 (beta)
 Author: NikolayS93
 Author URI: https://vk.com/nikolays_93
 Author EMAIL: nikolayS93@ya.ru
@@ -13,6 +13,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 /**
+ * @todo : Добавить сюда хуки плагина
+ *         Добавить переводы
+ *
  * Хуки плагина:
  * $pageslug . _after_title (default empty hook)
  * $pageslug . _before_form_inputs (default empty hook)
@@ -93,14 +96,38 @@ class Plugin
         // includes
         Utils::load_file_if_exists( $dir_include . '/register-post-type.php' );
         Utils::load_file_if_exists( $dir_include . '/shortcode.php' );
+        Utils::load_file_if_exists( $dir_include . '/click-count.php' );
         Utils::load_file_if_exists( $dir_include . '/admin-settings-page.php' );
     }
 
     private static function _actions()
     {
-        add_action( 'LWModal_header', function( $modal ) {
-            if( $modal ) echo "<h2>{$modal->post_title}</h2>";
-        }, 10, 1 );
+        $class = __NAMESPACE__ . '\Modal';
+        add_action('wp_footer', array($class, 'setup_footer'));
+        add_shortcode( Utils::get_shortcode_name(), array($class, 'shortcode') );
+
+        add_action( 'LWModal_body', array(__CLASS__, 'modal_window_head'), 10, 2 );
+        add_action( 'LWModal_body', array(__CLASS__, 'modal_window_body'), 10, 2 );
+    }
+
+    static function modal_window_body( $modal, $type )
+    {
+        switch ( $type ) {
+            case 'ajax':
+            echo '<div style="min-width: 400px;" id="ajax_data_'.$modal->ID.'"> '. __( 'Loading..' ) .' </div>';
+            break;
+
+            case 'inline':
+            default:
+            echo apply_filters( 'the_content', $modal->post_content );
+            break;
+        }
+    }
+
+    static function modal_window_head( $modal, $type )
+    {
+        if( $modal )
+            echo "<h2>{$modal->post_title}</h2>";
     }
 
     private static function _filters(){}
