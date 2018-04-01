@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) )
 
 add_action('init', __NAMESPACE__ . '\register_modal_types');
 function register_modal_types() {
-    register_post_type( Utils::get_posttype_name(), Utils::get_settings( 'post-type.php' ) );
+    register_post_type( Utils::get_posttype_name(), Utils::get_settings( 'register-post-type.php' ) );
 }
 
 add_action('admin_enqueue_scripts', __NAMESPACE__ . '\register_modal_admin_script');

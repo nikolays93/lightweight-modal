@@ -5,7 +5,7 @@ namespace NikolayS93\LWModal;
 if ( ! defined( 'ABSPATH' ) )
   exit; // disable direct access
 
-$modal_types = array(
+$modal_libs = array(
     ''          => __('Do not use', DOMAIN),
     'fancybox3' => __('Fancybox 3', DOMAIN),
     // 'magnific'   => __('Magnific Popup', DOMAIN),
@@ -18,7 +18,7 @@ $props = array(
         'type'    => 'select',
         'id'      => 'lib_props][modal_type',
         'label'   => __('Libary', DOMAIN),
-        'options' => $modal_types,
+        'options' => $modal_libs,
         'value'   => 'fancybox3',
         'input_class' => 'button right',
     ),
