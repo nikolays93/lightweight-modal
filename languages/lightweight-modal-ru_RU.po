@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: plugin\n"
-"POT-Creation-Date: 2018-04-01 17:37+0400\n"
-"PO-Revision-Date: 2018-04-01 21:50+0400\n"
+"POT-Creation-Date: 2018-04-01 22:18+0400\n"
+"PO-Revision-Date: 2018-04-01 22:19+0400\n"
 "Last-Translator: \n"
 "Language-Team: NikolayS93 <NikolayS93@yandex.ru>\n"
 "Language: ru_RU\n"
@@ -64,74 +64,74 @@ msgstr "Выберите вариант"
 msgid "Event"
 msgstr "Событие"
 
-#: includes/settings/lib_fancybox3.php:3
+#: includes/settings/lib_fancybox3.php:9
 msgid "Do not use"
 msgstr "Не использовать"
 
-#: includes/settings/lib_fancybox3.php:5
+#: includes/settings/lib_fancybox3.php:10
 msgid "Fancybox 3"
 msgstr ""
 
-#: includes/settings/lib_fancybox3.php:15
+#: includes/settings/lib_fancybox3.php:20
 msgid "Libary"
 msgstr "Библиотека"
 
-#: includes/settings/lib_fancybox3.php:23
+#: includes/settings/lib_fancybox3.php:29
 msgid "jQuery Selector"
 msgstr "jQuery селектор"
 
-#: includes/settings/lib_fancybox3.php:34
+#: includes/settings/lib_fancybox3.php:40
 msgid "Show effect"
 msgstr "Эффект открытия"
 
-#: includes/settings/lib_fancybox3.php:36
-#: includes/settings/lib_fancybox3.php:48
+#: includes/settings/lib_fancybox3.php:43
+#: includes/settings/lib_fancybox3.php:57
 msgid "Without effect"
 msgstr "Без эффекта"
 
-#: includes/settings/lib_fancybox3.php:37
+#: includes/settings/lib_fancybox3.php:44
 msgid "Zoom"
 msgstr "Увеличение от объекта"
 
-#: includes/settings/lib_fancybox3.php:38
-#: includes/settings/lib_fancybox3.php:49
+#: includes/settings/lib_fancybox3.php:45
+#: includes/settings/lib_fancybox3.php:58
 msgid "Fade"
 msgstr "Угасание"
 
-#: includes/settings/lib_fancybox3.php:39
-#: includes/settings/lib_fancybox3.php:53
+#: includes/settings/lib_fancybox3.php:46
+#: includes/settings/lib_fancybox3.php:62
 msgid "Zoom in out"
 msgstr "Увеличение из вне"
 
-#: includes/settings/lib_fancybox3.php:46
+#: includes/settings/lib_fancybox3.php:54
 msgid "Prev/Next effect"
 msgstr "Эффект перелистывания"
 
-#: includes/settings/lib_fancybox3.php:50
+#: includes/settings/lib_fancybox3.php:59
 msgid "Slide"
 msgstr "Скольжение"
 
-#: includes/settings/lib_fancybox3.php:51
+#: includes/settings/lib_fancybox3.php:60
 msgid "Circular"
 msgstr "Циркуляция"
 
-#: includes/settings/lib_fancybox3.php:52
+#: includes/settings/lib_fancybox3.php:61
 msgid "Tube"
 msgstr "Труба"
 
-#: includes/settings/lib_fancybox3.php:54
+#: includes/settings/lib_fancybox3.php:63
 msgid "Rotate"
 msgstr "Переворот"
 
-#: includes/settings/lib_fancybox3.php:61
+#: includes/settings/lib_fancybox3.php:70
 msgid "To group objects, use the same <em>rel</em>"
 msgstr "Для группировки объектов используйте одинаковый <em>rel</em>"
 
-#: includes/settings/post_metabox.php:17
+#: includes/settings/post_metabox.php:15
 msgid "Type:"
 msgstr "Тип:"
 
-#: includes/settings/post_metabox.php:20
+#: includes/settings/post_metabox.php:18
 msgid "Hide on footer"
 msgstr "Скрыть в подвале"
 
@@ -139,40 +139,40 @@ msgstr "Скрыть в подвале"
 msgid "Open"
 msgstr "Открыть"
 
-#: includes/settings/post_metabox2.php:18
+#: includes/settings/post_metabox2.php:17
 msgid ""
 "Copy the code above to the desired page, or paste the following code into "
 "the template"
 msgstr ""
 "Скопируйте код выше на нужную страницу или вставьте следующий код в шаблон"
 
-#: includes/settings/post_metabox2.php:28
+#: includes/settings/post_metabox2.php:27
 msgid "On click on [shortcode]'s content"
 msgstr "При нажатии на контент [кода]'а"
 
-#: includes/settings/post_metabox2.php:29
+#: includes/settings/post_metabox2.php:28
 msgid "On click on selector"
 msgstr "При нажатии по селектору"
 
-#: includes/settings/post_metabox2.php:30
+#: includes/settings/post_metabox2.php:29
 msgid "Page on load, after (sec)"
 msgstr "После загрузки страницы (сек.)"
 
-#: includes/settings/post_metabox2.php:31
+#: includes/settings/post_metabox2.php:30
 msgid "When user try to close tab"
 msgstr "При попытке закрыть вкладку"
 
-#: includes/settings/post_metabox2.php:47
+#: includes/settings/post_metabox2.php:46
 msgid "Insert CSS/jQuery selector for \"Click\" event"
 msgstr "Введите CSS/jQuery селектор для события \"Click\""
 
-#: includes/settings/post_metabox2.php:57
+#: includes/settings/post_metabox2.php:56
 msgid "Insert time (seconds count), open window after page on load"
 msgstr ""
 "Введите время (колличество секунд), через которое открыть окно после "
 "загрузки страницы"
 
-#: includes/settings/post_metabox2.php:68
+#: includes/settings/post_metabox2.php:67
 msgid "Disallow show window"
 msgstr "После, запретить показ на"
 
@@ -180,6 +180,10 @@ msgstr "После, запретить показ на"
 msgid "Insert the number of hours the window will be disabled"
 msgstr ""
 "Введите количество часов, открытие окна на протяжении которых будет отключено"
+
+#: includes/settings/post_metabox2.php:71
+msgid "Need the cookies"
+msgstr "Использует печеньки :)"
 
 #: includes/wp-list-table.php:37
 msgid "Title"
@@ -193,12 +197,12 @@ msgstr "Изменить"
 msgid "Delete"
 msgstr "Удалить"
 
-#: lightweight-modal.php:92
+#: lightweight-modal.php:102
 #, php-format
 msgid "Duplicate class %s"
 msgstr ""
 
-#: lightweight-modal.php:117
+#: lightweight-modal.php:127
 msgid "Loading.."
 msgstr "Загрузка.."
 

@@ -66,7 +66,10 @@ $form = array(
             'strong',
             __('Disallow show window', DOMAIN)
         ),
-        'desc'  => __('Insert the number of hours the window will be disabled', DOMAIN),
+        'desc'  => sprintf('%s. <span style="color: #f00;">%s</span>',
+            __('Insert the number of hours the window will be disabled', DOMAIN),
+            __('Need the cookies', DOMAIN)
+        ),
         'custom_attributes' => array(
             'onclick' => 'select(this)',
             'style' => 'width: 50px; float: right;',

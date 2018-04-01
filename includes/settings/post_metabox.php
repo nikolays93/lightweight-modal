@@ -7,14 +7,12 @@ if ( ! defined( 'ABSPATH' ) )
 
 global $post;
 
-$br = ' <br>';
-
 // @todo: Активно до:
 $form = array(
     array(
         'id'    => '_modal_type',
         'type'  => 'select',
-        'label' => __('Type:', DOMAIN) . $br,
+        'label' => __('Type:', DOMAIN) . ' <br>',
         'input_class' => 'button right',
         'options' => array(
             'inline' => __('Hide on footer', DOMAIN),
