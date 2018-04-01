@@ -19,8 +19,8 @@ class WP_List_Table extends \WP_List_Table {
     public function __construct($args = array())
     {
         $args = wp_parse_args( $args, array(
-            'singular' => 'modal',
-            'plural'   => 'modals',
+            'singular' => '',
+            'plural'   => '',
             'ajax'     => false,
         ) );
 

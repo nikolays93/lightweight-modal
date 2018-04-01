@@ -14,7 +14,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 /**
  * @todo : Добавить сюда хуки плагина
- *         Добавить переводы
  *
  * Хуки плагина:
  * $pageslug . _after_title (default empty hook)
@@ -88,10 +87,10 @@ class Plugin
         $libs        = Utils::get_plugin_dir('libs');
 
         $classes = array(
-            __NAMESPACE__ . '\Example_List_Table' => $dir_include . '/wp-list-table.php',
-            __NAMESPACE__ . '\WP_Admin_Page'      => $libs . '/wp-admin-page.php',
-            __NAMESPACE__ . '\WP_Admin_Forms'     => $libs . '/wp-admin-forms.php',
-            __NAMESPACE__ . '\WP_Post_Boxes'      => $libs . '/wp-post-boxes.php',
+            __NAMESPACE__ . '\WP_List_Table'  => $libs . '/wp-list-table.php',
+            __NAMESPACE__ . '\WP_Admin_Page'  => $libs . '/wp-admin-page.php',
+            __NAMESPACE__ . '\WP_Admin_Forms' => $libs . '/wp-admin-forms.php',
+            __NAMESPACE__ . '\WP_Post_Boxes'  => $libs . '/wp-post-boxes.php',
         );
 
         foreach ($classes as $classname => $path) {
@@ -105,9 +104,9 @@ class Plugin
 
         // includes
         Utils::load_file_if_exists( $dir_include . '/register-post-type.php' );
-        Utils::load_file_if_exists( $dir_include . '/shortcode.php' );
-        Utils::load_file_if_exists( $dir_include . '/click-count.php' );
-        Utils::load_file_if_exists( $dir_include . '/admin-settings-page.php' );
+        Utils::load_file_if_exists( $dir_include . '/public.php' );
+        Utils::load_file_if_exists( $dir_include . '/modals/fancybox.php' );
+        Utils::load_file_if_exists( $dir_include . '/admin-page.php' );
     }
 
     private static function _actions()
