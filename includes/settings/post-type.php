@@ -6,18 +6,16 @@ if ( ! defined( 'ABSPATH' ) )
   exit; // disable direct access
 
 $post_type_labels = array(
-    'name'               => __( 'Всплывающие окна', DOMAIN ),
-    'singular_name'      => __( 'Всплывающее окно', DOMAIN ),
-    'add_new'            => __( 'Добавить всплывающее окно', DOMAIN ),
-    'add_new_item'       => __( 'Добавление всплывающего окна', DOMAIN ),
-    'edit_item'          => __( 'Редактирование всплывающего окна', DOMAIN ),
-    'new_item'           => __( 'Новое всплывающее окно', DOMAIN ),
-    'view_item'          => __( 'Смотреть всплывающее окно', DOMAIN ),
-    'search_items'       => __( 'Искать всплывающее окно', DOMAIN ),
-    'not_found'          => __( 'Не найдено', DOMAIN ),
-    'not_found_in_trash' => __( 'Не найдено в корзине', DOMAIN ),
-    // 'parent_item_colon'  => '',
-    // 'menu_name'          __( => 'Всплывающие окна', DOMAIN ),
+    'name'               => _x( 'Modal windows', DOMAIN, 'post_type' ),
+    'singular_name'      => _x( 'Modal window', DOMAIN, 'post_type' ),
+    'add_new'            => _x( 'Добавить всплывающее окно', DOMAIN, 'post_type' ),
+    'add_new_item'       => _x( 'Добавление всплывающего окна', DOMAIN, 'post_type' ),
+    'edit_item'          => _x( 'Редактирование всплывающего окна', DOMAIN, 'post_type' ),
+    'new_item'           => _x( 'Новое всплывающее окно', DOMAIN, 'post_type' ),
+    'view_item'          => _x( 'Смотреть всплывающее окно', DOMAIN, 'post_type' ),
+    'search_items'       => _x( 'Искать всплывающее окно', DOMAIN, 'post_type' ),
+    'not_found'          => _x( 'Не найдено', DOMAIN, 'post_type' ),
+    'not_found_in_trash' => _x( 'Не найдено в корзине', DOMAIN, 'post_type' ),
 );
 
 $post_type = array(

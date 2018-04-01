@@ -1,10 +1,15 @@
 <?php
+
+namespace NikolayS93\LWModal;
+
+if ( ! defined( 'ABSPATH' ) )
+  exit; // disable direct access
+
 $modal_types = array(
-    ''          => 'Не использовать',
-    // 'fancybox2' => 'Fancybox 2',
-    'fancybox3' => 'Fancybox 3',
-    // 'magnific'   => 'Magnific Popup',
-    // 'photoswipe' => 'PhotoSwipe',
+    ''          => __('Do not use', DOMAIN),
+    'fancybox3' => __('Fancybox 3', DOMAIN),
+    // 'magnific'   => __('Magnific Popup', DOMAIN),
+    // 'photoswipe' => __('PhotoSwipe', DOMAIN),
     // 'lightgallery' => https://sachinchoolur.github.io/lightgallery.js/
 );
 
@@ -12,7 +17,7 @@ $props = array(
     array(
         'type'    => 'select',
         'id'      => 'lib_props][modal_type',
-        'label'   => 'Библиотека',
+        'label'   => __('Libary', DOMAIN),
         'options' => $modal_types,
         'value'   => 'fancybox3',
         'input_class' => 'button right',
@@ -20,45 +25,49 @@ $props = array(
     array(
         'type'      => 'text',
         'id'        => 'lib_props][modal_selector',
-        'label'     => '<hr> <strong>jQuery Селектор</strong> <br>',
-        // 'desc'      => 'Модальное окно (Галерея, всплывающее окно)',
+        'label'     => sprintf('<hr><%2$s>%1$s</%2$s><br>',
+            __('jQuery Selector', DOMAIN),
+            'strong'),
         'placeholder'   => '.fancybox, .zoom',
         'custom_attributes' => array(
             'onclick' => 'if(!this.value)this.value=jQuery(this).attr(\'placeholder\');focus()',
         ),
-        // 'input_class' => 'button right',
     ),
     array(
         'type'    => 'select',
         'id'      => 'lib_props][openCloseEffect',
-        'label'   => 'Эффект открытия',
+        'label'   => sprintf('<%2$s>%1$s</%2$s><br>',
+            __('Show effect', DOMAIN),
+            'strong'),
         'options' => array(
-            'false'     => 'Без эффекта',
-            'zoom'        => 'Увеличение от объекта',
-            'fade'        => 'Угасание',
-            'zoom-in-out' => 'Увеличение из вне',
+            'false'       => __('Without effect', DOMAIN),
+            'zoom'        => __('Zoom', DOMAIN),
+            'fade'        => __('Fade', DOMAIN),
+            'zoom-in-out' => __('Zoom in out', DOMAIN),
         ),
         'default' => 'zoom',
     ),
     array(
         'type'    => 'select',
         'id'      => 'lib_props][nextPrevEffect',
-        'label'   => 'Эффект перелистывания',
+        'label'   => sprintf('<%2$s>%1$s</%2$s><br>',
+            __('Prev/Next effect', DOMAIN),
+            'strong'),
         'options' => array(
-            'false'       => 'Без эффекта',
-            'fade'        => 'Угасание',
-            'slide'       => 'Скольжение',
-            'circular'    => 'Циркуляция',
-            'tube'        => 'Труба',
-            'zoom-in-out' => 'Увеличение из вне',
-            'rotate'      => 'Переворот',
+            'false'       => __('Without effect', DOMAIN),
+            'fade'        => __('Fade', DOMAIN),
+            'slide'       => __('Slide', DOMAIN),
+            'circular'    => __('Circular', DOMAIN),
+            'tube'        => __('Tube', DOMAIN),
+            'zoom-in-out' => __('Zoom in out', DOMAIN),
+            'rotate'      => __('Rotate', DOMAIN),
         ),
         'default' => 'fade',
     ),
     array(
         'type'    => 'html',
         'id'      => 'for_group',
-        'value'   => 'Для группировки объектов используйте одинаковый <em>rel</em>'
+        'value'   => __('To group objects, use the same <em>rel</em>', DOMAIN),
     ),
 );
 

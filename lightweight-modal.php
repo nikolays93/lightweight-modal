@@ -53,8 +53,18 @@ class Plugin
     private static $initialized;
     private function __construct() {}
 
-    static function activate() { add_option( Utils::get_option_name(), array() ); }
-    static function uninstall() { delete_option( Utils::get_option_name() ); }
+    static function activate()
+    { 
+        add_option( Utils::get_option_name(), array(
+            'lib_props_openCloseEffect' => 'zoom',
+            'lib_props_nextPrevEffect' => 'slide',
+        ) );
+    }
+
+    static function uninstall() {
+
+        delete_option( Utils::get_option_name() );
+    }
 
     public static function initialize()
     {

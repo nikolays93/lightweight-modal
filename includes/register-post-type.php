@@ -14,14 +14,14 @@ add_action('admin_enqueue_scripts', __NAMESPACE__ . '\register_modal_admin_scrip
 function register_modal_admin_script() {
     $screen = get_current_screen();
     if( !empty($screen->post_type) && Utils::get_posttype_name() === $screen->post_type ) {
-        wp_enqueue_script( 'admin_modal_post_type', Utils::get_plugin_url('/assets/admin-post-type.js'), array('jquery') );
+        wp_enqueue_script( 'admin_modal_post_type',
+            Utils::get_plugin_url('/assets/admin-post-type.js'), array('jquery') );
     }
-
 }
 
 // $mb = new WP_Post_Boxes( array( Utils::get_posttype_name() ) );
 // $mb->add_fields( array('_modal_type',)); //'_selector') );
-// $mb->add_box( __( 'Дополнительные настройки', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
+// $mb->add_box( __( 'Advanced settings', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox', $side = true );
 
 // function modal_post_metabox() {
 //     $form = new WP_Admin_Forms( Utils::get_settings('post_metabox.php'), true, $args = array(
@@ -34,7 +34,7 @@ function register_modal_admin_script() {
 
 $mb = new WP_Post_Boxes( array( Utils::get_posttype_name() ) );
 $mb->add_fields( array('_trigger_type', '_disable_ontime') );
-$mb->add_box( __( 'Событие', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox2', $side = true );
+$mb->add_box( __( 'Event', DOMAIN ), __NAMESPACE__ . '\modal_post_metabox2', $side = true );
 
 function modal_post_metabox2() {
     global $post;

@@ -7,9 +7,15 @@ if ( ! defined( 'ABSPATH' ) )
 
 global $post;
 
-$shortcode_name = Utils::get_shortcode_name();
-$shortcode = '['.$shortcode_name.' id="'.$post->ID.'"]Открыть[/'.$shortcode_name.']';
-$template_sc = "<big onclick='select(this)'>echo do_shortcode('<span class='no-break'>$shortcode</span>');</big>";
+$shortcode = sprintf('[%1$s id="%2$d"]%3$s[/%1$s]',
+    Utils::get_shortcode_name(),
+    $post->ID,
+    __('Open', DOMAIN));
+
+$shortcode_tpl = "<pre id='shortcode_tpl'>&lt;?php echo do_shortcode('<br><span class='no-break'>$shortcode</span><br>'); ?></pre>";
+
+$help = __('Copy the code above to the desired page, or paste the following code into the template',
+    DOMAIN) . '<br>';
 
 $form = array(
     array(
@@ -18,19 +24,16 @@ $form = array(
         // 'label' => 'Trigger',
         'input_class' => 'widefat button',
         'options' => array(
-            'shortcode' => 'При нажатии на контент shortcode\'а',
-            'onclick' => 'При нажатии по селектору',
-            'onload' => 'При загрузке страницы, через (сек)',
-            'onclose' => 'При попытке закрыть вкладку',
+            'shortcode' => __('On click on [shortcode]\'s content', DOMAIN),
+            'onclick'   => __('On click on selector', DOMAIN),
+            'onload'    => __('Page on load, after (sec)', DOMAIN),
+            'onclose'   => __('When user try to close tab', DOMAIN),
         ),
-        'desc'  => '',
     ),
     array(
         'id'    => '_shortcode',
         'type'  => 'text',
-        // 'label' => 'Селектор',
-        'desc'  => 'Скопируйте код выше на нужную страницу или вставьте в шаблон <br>
-        ',
+        'desc'  => $help . $shortcode_tpl,
         'input_class' => 'widefat',
         'custom_attributes' => array(
             'onclick' => 'select(this)',
@@ -40,7 +43,7 @@ $form = array(
     array(
         'id'    => '_onclick',
         'type'  => 'text',
-        'desc'  => 'Введите CSS/jQuery селектор для события "Click"',
+        'desc'  => __('Insert CSS/jQuery selector for "Click" event', DOMAIN),
         'input_class' => 'widefat',
         'placeholder' => '#selector',
         'custom_attributes' => array(
@@ -50,7 +53,7 @@ $form = array(
     array(
         'id'    => '_onload',
         'type'  => 'text',
-        'desc'  => 'Введите время (колличество секунд), через которое открыть окно после загрузки страницы',
+        'desc'  => __('Insert time (seconds count), open window after page on load', DOMAIN),
         'input_class' => 'widefat',
         'custom_attributes' => array(
             'onclick' => 'select(this)',
@@ -59,8 +62,11 @@ $form = array(
     array(
         'id'    => '_disable_ontime',
         'type'  => 'number',
-        'label' => '<strong>После, запретить показ на</strong>',
-        'desc'  => 'Введите колличество часов, открытие окна на протяжении которых будет отключено',
+        'label' => sprintf('<%1$s>%2$s</%1$s>',
+            'strong',
+            __('Disallow show window', DOMAIN)
+        ),
+        'desc'  => __('Insert the number of hours the window will be disabled', DOMAIN),
         'custom_attributes' => array(
             'onclick' => 'select(this)',
             'style' => 'width: 50px; float: right;',

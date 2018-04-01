@@ -7,17 +7,19 @@ if ( ! defined( 'ABSPATH' ) )
 
 global $post;
 
+$br = ' <br>';
+
 // @todo: Активно до:
 $form = array(
     array(
         'id'    => '_modal_type',
         'type'  => 'select',
-        'label' => 'Тип: <br>',
+        'label' => __('Type:', DOMAIN) . $br,
         'input_class' => 'button right',
         'options' => array(
-            'inline' => 'Прятать на странице',
-            // 'ajax'   => 'Загружать при открытии',
-            // 'iframe' => 'Cодержимое iframe'
+            'inline' => __('Hide on footer', DOMAIN),
+            // 'ajax'   => __('load after open', DOMAIN),
+            // 'iframe' => __('iFrame link', DOMAIN),
         ),
     ),
     // array(

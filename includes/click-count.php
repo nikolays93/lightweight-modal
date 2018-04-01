@@ -9,12 +9,12 @@ add_action( 'wp_ajax_nopriv_increase_click_count', __NAMESPACE__ . '\increase_cl
 add_action( 'wp_ajax_increase_click_count', __NAMESPACE__ . '\increase_click_count' );
 function increase_click_count() {
     if( ! wp_verify_nonce( $_POST['nonce'], 'Secret' ) ) {
-        wp_die('Ошибка! нарушены правила безопасности');
+        wp_die( __('Error! Failed security policy', DOMAIN) );
     }
 
     $modal_id = absint( $_POST['modal_id'] );
     if( $modal_id < 1 ) {
-        wp_die('Не передан ID модального окна');
+        wp_die( __('Not given the ID of a modal window', DOMAIN) );
     }
 
     $count = get_post_meta( $modal_id, '_count', true );

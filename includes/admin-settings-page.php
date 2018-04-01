@@ -73,7 +73,7 @@ class AdminSettingsPage
 
         echo $form->render();
 
-        submit_button( 'Сохранить', 'primary right', 'save_changes' );
+        submit_button( __('Save', DOMAIN), 'primary right', 'save_changes' );
         echo '<div class="clear"></div>';
     }
     
