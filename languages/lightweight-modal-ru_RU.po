@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plugin\n"
 "POT-Creation-Date: 2018-04-01 17:37+0400\n"
-"PO-Revision-Date: 2018-04-01 21:40+0400\n"
+"PO-Revision-Date: 2018-04-01 21:50+0400\n"
 "Last-Translator: \n"
 "Language-Team: NikolayS93 <NikolayS93@yandex.ru>\n"
 "Language: ru_RU\n"
@@ -156,7 +156,7 @@ msgstr "При нажатии по селектору"
 
 #: includes/settings/post_metabox2.php:30
 msgid "Page on load, after (sec)"
-msgstr "После загрузки страницы"
+msgstr "После загрузки страницы (сек.)"
 
 #: includes/settings/post_metabox2.php:31
 msgid "When user try to close tab"
