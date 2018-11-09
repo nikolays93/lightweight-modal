@@ -2,8 +2,6 @@
 
 namespace NikolayS93\LWModal;
 
-define(__NAMESPACE__ . '\LWMODAL_COUNT_META', '_count');
-
 /**
  * Check click count
  */
@@ -19,8 +17,8 @@ function increase_click_count() {
         wp_die( __('Not given the ID of a modal window', DOMAIN) );
     }
 
-    $count = get_post_meta( $modal_id, LWMODAL_COUNT_META, true );
-    update_post_meta( $modal_id, LWMODAL_COUNT_META, intval($count) + 1 );
+    $count = get_post_meta( $modal_id, LW_MODAL_COUNT_META, true );
+    update_post_meta( $modal_id, LW_MODAL_COUNT_META, intval($count) + 1 );
 
     echo $count;
     wp_die();

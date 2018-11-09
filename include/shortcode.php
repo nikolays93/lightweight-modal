@@ -12,7 +12,8 @@ class Shortcode
     private static function push_active_bootstraps()
     {
         self::$bootstraps += get_posts( array(
-            'post_type'  => Utils::get_posttype_name(),
+            'post_status' => 'publish',
+            'post_type'  => Utils::get_post_type_name(),
             'meta_query' => array(
                 array(
                     'key'     => '_trigger_type',
@@ -87,20 +88,37 @@ class Shortcode
         $assets = Utils::get_plugin_url('/assets');
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '.min' : '';
 
-        $summary = wp_parse_args( Utils::get( 'lib_props' ), array(
-            'modal_type' => false,
-            'modal_selector' => false,
-        ) );
+        $gSettings = wp_parse_args(Utils::get(), array(
+            'selector' => '',
+            'lib_name' => '',
+            'lib_args' => array(),
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce'    => wp_create_nonce( 'Secret' ),
+            'cookie'   => 'lw_disabled',
+            'expires'  => 24 * 7, // one week
+        ));
 
-        $has_summary = (!empty( $summary['modal_type'] ) && !empty( $summary['modal_selector'] ));
-        $has_modals = sizeof(self::$bootstraps);
+        if( !empty($gSettings['lib_name']) ) {
+            if( 'fancybox3' === $gSettings['lib_name'] ) {
+                wp_enqueue_script(
+                    'fancybox3',
+                    $assets . "/fancybox3/jquery.fancybox{$affix}.js",
+                    array('jquery'),
+                    '3.0',
+                    true
+                );
+                wp_enqueue_style(
+                    'fancybox3',
+                    $assets . "/fancybox3/jquery.fancybox{$affix}.css",
+                    null,
+                    '3.0'
+                );
+            }
+        }
 
-        if(!$has_summary && !$has_modals)
-            return;
-
-        $summary['modals'] = array();
+        $modals = array();
         foreach (self::$bootstraps as $modal) {
-            $summary['modals'][ $modal->ID ] = array(
+            $modals[ $modal->ID ] = array(
                 'trigger_type'   => get_post_meta( $modal->ID, '_trigger_type', true ),
                 'trigger'        => get_post_meta( $modal->ID, '_trigger', true ),
                 'disable_ontime' => get_post_meta( $modal->ID, '_disable_ontime', true ),
@@ -108,29 +126,10 @@ class Shortcode
             );
         }
 
-        if( 'fancybox3' === $summary['modal_type'] ) {
-            wp_enqueue_script(
-                'fancybox3',
-                $assets . "/fancybox3/jquery.fancybox{$affix}.js",
-                array('jquery'),
-                '3.0',
-                true
-            );
-            wp_enqueue_style(
-                'fancybox3',
-                $assets . "/fancybox3/jquery.fancybox{$affix}.css",
-                null,
-                '3.0'
-            );
-        }
+        wp_enqueue_script( 'LWModals_public', $assets . '/public.js', array('jquery'), Plugin::$data['Version'], true );
 
-        wp_enqueue_script( 'LWModals_public', Utils::get_plugin_url('/public.js'), array('jquery'), '0.2', true );
-
-        wp_localize_script( 'LWModals_public', 'LWModals', $summary );
-        wp_localize_script( 'LWModals_public', 'LWM_Settings', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce( 'Secret' ),
-        ) );
+        wp_localize_script( 'LWModals_public', 'LWModals', $modals );
+        wp_localize_script( 'LWModals_public', 'LWM_Settings', $gSettings );
     }
 
     /**

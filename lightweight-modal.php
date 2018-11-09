@@ -4,7 +4,7 @@
  * Plugin Name: Легкие модальные (всплывающие) окна
  * Plugin URI: https://github.com/nikolays93/lightweight-modal
  * Description: Модальные окна для создания галерей, всплывающих форм и сообщений
- * Version: 0.3.0 (beta)
+ * Version: 0.3.0b
  * Author: NikolayS93
  * Author URI: https://vk.com/nikolays_93
  * Author EMAIL: NikolayS93@ya.ru
@@ -28,7 +28,7 @@ if (version_compare(PHP_VERSION, '5.3') < 0) {
 
 class Plugin
 {
-    protected static $data;
+    public static $data;
     protected static $options;
 
     private function __construct() {}
@@ -49,11 +49,9 @@ class Plugin
     {
         self::$data = get_plugin_data(__FILE__);
 
-        if( !defined(__NAMESPACE__ . '\DOMAIN') )
-            define(__NAMESPACE__ . '\DOMAIN', self::$data['TextDomain']);
-
-        if( !defined(__NAMESPACE__ . '\PLUGIN_DIR') )
-            define(__NAMESPACE__ . '\PLUGIN_DIR', __DIR__);
+        if( !defined(__NAMESPACE__ . '\DOMAIN') ) define(__NAMESPACE__ . '\DOMAIN', self::$data['TextDomain']);
+        if( !defined(__NAMESPACE__ . '\PLUGIN_DIR') ) define(__NAMESPACE__ . '\PLUGIN_DIR', __DIR__);
+        if( !defined('LW_MODAL_COUNT_META') ) define('LW_MODAL_COUNT_META', '_count');
     }
 
     /**
@@ -90,7 +88,7 @@ class Plugin
         add_option(
             self::get_option_name(),
             array(
-                'lib' => array(
+                'lib_prop' => array(
                     'openCloseEffect' => 'zoom',
                     'nextPrevEffect' => 'slide',
                 ),

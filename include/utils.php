@@ -2,8 +2,9 @@
 
 namespace NikolayS93\LWModal;
 
-if ( ! defined( 'ABSPATH' ) )
-  exit; // disable direct access
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // disable direct access
+}
 
 class Utils extends Plugin
 {
@@ -77,15 +78,12 @@ class Utils extends Plugin
      * @param  mixed   $default   Что возвращать, если параметр не найден
      * @return mixed
      */
-    public static function get( $prop_name, $default = false )
+    public static function get( $prop_name = '', $default = false )
     {
         $option = self::get_option();
-        if( 'all' === $prop_name ) {
-            if( is_array($option) && count($option) ) {
-                return $option;
-            }
-
-            return $default;
+        if( !$prop_name ) {
+            if( !empty($option) ) return $option;
+            else return $default;
         }
 
         return isset( $option[ $prop_name ] ) ? $option[ $prop_name ] : $default;

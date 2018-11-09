@@ -7,9 +7,9 @@ use NikolayS93\WPAdminForm\Form as Form;
 add_filter( 'LWModal_libs', __NAMESPACE__ . '\add_fancybox_listitem', 10, 1 );
 function add_fancybox_listitem( $libs ) {
     $libs['fancybox3']    = __('Fancybox 3', DOMAIN);
-    $libs['magnific']     = __('Magnific Popup', DOMAIN);
-    $libs['photoswipe']   = __('PhotoSwipe', DOMAIN);
-    $libs['lightgallery'] = __('LightGallery', DOMAIN); // https://sachinchoolur.github.io/lightgallery.js/
+    // $libs['magnific']     = __('Magnific Popup', DOMAIN);
+    // $libs['photoswipe']   = __('PhotoSwipe', DOMAIN);
+    // $libs['lightgallery'] = __('LightGallery', DOMAIN); // https://sachinchoolur.github.io/lightgallery.js/
 
     return $libs;
 }
@@ -38,7 +38,7 @@ $data = array(
     ),
     array(
         'type'    => 'select',
-        'id'      => 'lib][openCloseEffect',
+        'id'      => 'lib_args][openCloseEffect',
         'label'   => sprintf('<%2$s>%1$s</%2$s><br>', __('Show effect', DOMAIN), 'strong'),
         'options' => array(
             'false'       => __('Without effect', DOMAIN),
@@ -50,7 +50,7 @@ $data = array(
     ),
     array(
         'type'    => 'select',
-        'id'      => 'lib][nextPrevEffect',
+        'id'      => 'lib_args][nextPrevEffect',
         'label'   => sprintf('<%2$s>%1$s</%2$s><br>', __('Prev/Next effect', DOMAIN), 'strong'),
         'options' => array(
             'false'       => __('Without effect', DOMAIN),
@@ -70,7 +70,9 @@ $data = array(
     ),
 );
 
-$form = new Form( $data, $is_table = true );
+$form = new Form( $data, array(
+    'is_table' => false,
+) );
 $form->display();
 
 submit_button( 'Сохранить', 'primary right', 'save_changes' );

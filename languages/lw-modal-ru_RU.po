@@ -1,0 +1,211 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plugin\n"
+"POT-Creation-Date: 2018-11-09 09:41+0400\n"
+"PO-Revision-Date: 2018-11-09 14:41+0400\n"
+"Last-Translator: \n"
+"Language-Team: NikolayS93 <NikolayS93@yandex.ru>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.8\n"
+"X-Poedit-Basepath: ../.\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: __;__e;_n:1,2;_x:1,2c\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: includes/classes\n"
+"X-Poedit-SearchPathExcluded-1: languages\n"
+"X-Poedit-SearchPathExcluded-2: .git\n"
+
+#: admin/template/menu-page.php:13
+msgid "Shortcode"
+msgstr "Короткий код"
+
+#: admin/template/menu-page.php:14
+msgid "Show Count"
+msgstr "Кол-во показов"
+
+#: admin/template/menu-page.php:15
+msgid "Author"
+msgstr "Автор"
+
+#: admin/template/menu-page.php:16
+msgid "Date"
+msgstr "Дата"
+
+#: admin/template/menu-page.php:34 include/register.php:75
+msgid "Open"
+msgstr "Открыть"
+
+#: admin/template/menu-page.php:49
+msgid "Create"
+msgstr "Создать"
+
+#: admin/template/metabox1.php:9
+msgid "Fancybox 3"
+msgstr "Fancybox 3"
+
+#: admin/template/metabox1.php:10
+msgid "Magnific Popup"
+msgstr "Magnific Popup"
+
+#: admin/template/metabox1.php:11
+msgid "PhotoSwipe"
+msgstr "PhotoSwipe"
+
+#: admin/template/metabox1.php:12
+msgid "LightGallery"
+msgstr "LightGallery"
+
+#: admin/template/metabox1.php:21
+msgid "Libary"
+msgstr "Библиотека"
+
+#: admin/template/metabox1.php:23
+msgid "Do not use"
+msgstr "Не использовать"
+
+#: admin/template/metabox1.php:32
+msgid "jQuery Selector"
+msgstr "jQuery селектор"
+
+#: admin/template/metabox1.php:42
+msgid "Show effect"
+msgstr "Эффект открытия"
+
+#: admin/template/metabox1.php:44 admin/template/metabox1.php:56
+msgid "Without effect"
+msgstr "Без эффекта"
+
+#: admin/template/metabox1.php:45
+msgid "Zoom"
+msgstr "Увеличение от объекта"
+
+#: admin/template/metabox1.php:46 admin/template/metabox1.php:57
+msgid "Fade"
+msgstr "Угасание"
+
+#: admin/template/metabox1.php:47 admin/template/metabox1.php:61
+msgid "Zoom in out"
+msgstr "Увеличение из вне"
+
+#: admin/template/metabox1.php:54
+msgid "Prev/Next effect"
+msgstr "Эффект перелистывания"
+
+#: admin/template/metabox1.php:58
+msgid "Slide"
+msgstr "Скольжение"
+
+#: admin/template/metabox1.php:59
+msgid "Circular"
+msgstr "Циркуляция"
+
+#: admin/template/metabox1.php:60
+msgid "Tube"
+msgstr "Труба"
+
+#: admin/template/metabox1.php:62
+msgid "Rotate"
+msgstr "Переворот"
+
+#: admin/template/metabox1.php:69
+msgid "To group objects, use the same <em>rel</em>"
+msgstr "Для группировки объектов используйте одинаковый аттрибут <em>rel</em>"
+
+#: include/ajax.php:14
+msgid "Error! Failed security policy"
+msgstr "Ошибка! нарушены правила безопасности"
+
+#: include/ajax.php:19
+msgid "Not given the ID of a modal window"
+msgstr "Не передан ID всплывающего окна"
+
+#: include/register.php:68
+msgid "Event"
+msgstr "Событие"
+
+#: include/register.php:79
+msgid ""
+"Copy the code above to the desired page, or paste the following code into "
+"the template"
+msgstr ""
+"Скопируйте код выше на нужную страницу или вставьте следующий код в шаблон"
+
+#: include/register.php:89
+msgid "On click on [shortcode]'s content"
+msgstr "При нажатии на контент [кода]'а"
+
+#: include/register.php:90
+msgid "On click on selector"
+msgstr "При нажатии по селектору"
+
+#: include/register.php:91
+msgid "Page on load, after (sec)"
+msgstr "После загрузки страницы (сек.)"
+
+#: include/register.php:92
+msgid "When user try to close tab"
+msgstr "При попытке закрыть вкладку"
+
+#: include/register.php:108
+msgid "Insert CSS/jQuery selector for \"Click\" event"
+msgstr "Введите CSS/jQuery селектор для \"Click\" события"
+
+#: include/register.php:118
+msgid "Insert time (seconds count), open window after page on load"
+msgstr ""
+"Введите время (колличество секунд), через которое открыть окно после "
+"загрузки страницы"
+
+#: include/register.php:129
+msgid "Disallow show window"
+msgstr "После, запретить показ на"
+
+#: include/register.php:132
+msgid "Insert the number of hours the window will be disabled"
+msgstr ""
+"Введите количество часов, открытие окна на протяжении которых будет отключено"
+
+#: include/register.php:133
+msgid "Need the cookies"
+msgstr "Использует печеньки :)"
+
+#: include/shortcode.php:153
+msgid "Loading.."
+msgstr "Загрузка.."
+
+#: lightweight-modal.php:111 lightweight-modal.php:115
+msgid "Modals"
+msgstr "Всплывающие окна"
+
+#: lightweight-modal.php:129
+msgid "Lib settings"
+msgstr "Настройки библиотеки"
+
+#~ msgid "Save"
+#~ msgstr "Сохранить"
+
+#~ msgid "Choose an option"
+#~ msgstr "Выберите вариант"
+
+#~ msgid "Type:"
+#~ msgstr "Тип:"
+
+#~ msgid "Hide on footer"
+#~ msgstr "Скрыть в подвале"
+
+#~ msgid "Title"
+#~ msgstr "Заголовок"
+
+#~ msgid "Edit"
+#~ msgstr "Изменить"
+
+#~ msgid "Delete"
+#~ msgstr "Удалить"
+
+#~ msgid "The file %s can not be included"
+#~ msgstr "Файл %s не может быть загружен"
