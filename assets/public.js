@@ -1,102 +1,99 @@
+/**
+ * global LWModals, LWM_Settings
+ */
 jQuery(document).ready(function($) {
-    function getCookie(e){var o=document.cookie.match(new RegExp("(?:^|; )"+e.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));return o?decodeURIComponent(o[1]):void 0}
-    // name, value, options[expires, path]
-    function setCookie(e,o,i){var r=(i=i||{}).expires;if("number"==typeof r&&r){var t=new Date;t.setTime(t.getTime()+1e3*r),r=i.expires=t}r&&r.toUTCString&&(i.expires=r.toUTCString());var n=e+"="+(o=encodeURIComponent(o));for(var a in i){n+="; "+a;var m=i[a];!0!==m&&(n+="="+m)}document.cookie=n}
+    // const
+    var hour = 60 * 60 * 1000;
+    var cookieLive = hour * LWM_Settings.expires;
+    // let
+    var disabled = {};
 
-    function increase_click_count( modal_id ) {
-        $.ajax({
-            type: 'POST',
-            url: LWM_Settings.ajax_url,
-            data: {
-                action: 'increase_click_count',
-                nonce: LWM_Settings.nonce,
-                modal_id: modal_id
-            },
-            success: function(response){
-                //alert('Получено с сервера: ' + response);
-            }
-        }).fail(function() {
-            console.log('Warning: Ajax Fatal Error!');
+    function getCookie(e){var o=document.cookie.match(new RegExp("(?:^|; )"+e.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));return o?decodeURIComponent(o[1]):void 0}
+
+    function increaseClickCount( modal_id ) {
+        $.post( LWM_Settings.ajax_url, {
+            action: 'increase_click_count',
+            nonce: LWM_Settings.nonce,
+            modal_id: modal_id
         });
     }
 
-    function openLWModal(index, val, ignoreCookie = false) {
-        var disabled = getCookie('lwdisabled');
-        disabled = disabled ? JSON.parse( disabled ) : {};
+    function writeCookieTime( modal_id, time ) {
+        if( 0 >= time ) return;
+        var now = new Date().getTime();
 
-        if( !ignoreCookie && index in disabled ) return;
+        disabled[ modal_id ] = now + (hour * time);
+        document.cookie = LWM_Settings.cookie +"="+ JSON.stringify(disabled) +"; path=/; expires=" + new Date(now + cookieLive).toUTCString();
+    }
+
+    function openLWModal(modal_id, args) {
         try {
-            $.fancybox.open({
-                src  : '#modal_' + index,
-                type : 'inline',
-                opts : {
-                    afterShow : function( instance, current ) {
-                        if(!ignoreCookie) {
-                            /**
-                             * @todo
-                             * Записывать для каждого окна время, до когда его дизактивировать
-                             * и после сверять с существующим временем
-                             */
-                            disabled[ index ] = 1;
-                            setCookie( 'lwdisabled', JSON.stringify(disabled), {expires: 60 * 60 * val.disable_ontime} ); // hours
-                        }
-
-                        increase_click_count( index );
-                    }
-                }
-            });
+            disabled = JSON.parse( getCookie( LWM_Settings.cookie ) );
         } catch(e) {
-            console.error('Библиотека не установленна');
             console.log(e);
         }
 
+        if( args.disable_ontime <= 0 || ( !(modal_id in disabled) && new Date().getTime() > disabled[ modal_id ] ) ) {
+            try {
+                $.fancybox.open({
+                    src  : '#modal_' + modal_id,
+                    type : 'inline',
+                    opts : {
+                        afterShow : function( instance, current ) {
+                            writeCookieTime( modal_id, args.disable_ontime );
+                            increaseClickCount( modal_id );
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error('Библиотека не установленна');
+                console.log(e);
+            }
+        }
     }
 
-    if( LWModals.modal_selector ){
-        // if( LWModals.modal_type == 'fancybox3' ){
-            $( LWModals.modal_selector ).each(function(index, el) {
-                $(this).attr('data-fancybox', $(this).attr('rel') );
-            });
+    if( LWM_Settings.selector ) {
+        // compatibility
+        $( LWM_Settings.selector ).each(function(index, el) {
+            $(this).attr('data-fancybox', $(this).attr('rel') );
+        });
 
-            var fancyModal = $( LWModals.modal_selector ).fancybox({
-                animationEffect : LWModals.openCloseEffect,
-                transitionEffect : LWModals.nextPrevEffect,
-            });
-        // }
+        $( LWM_Settings.selector ).fancybox({
+            animationEffect : LWM_Settings.lib_args.openCloseEffect,
+            transitionEffect : LWM_Settings.lib_args.nextPrevEffect,
+        });
     }
 
-    var opened = {};
-    $.each(LWModals.modals, function(modal_id, modal) {
+    /**
+     * Set events
+     */
+    $.each(LWModals, function(modal_id, modal) {
         if( 'shortcode' == modal.trigger_type ) return;
 
-        var ignore = modal.disable_ontime <= 0;
         switch ( modal.trigger_type ) {
             case 'onclick':
-                $(modal.trigger).on('click', function(event) {
-                    openLWModal(modal_id, modal, true);
+                $( modal.trigger ).on('click', function(event) {
+                    openLWModal(modal_id, modal);
                 });
             break;
             case 'onload':
-                setTimeout(function(){
-                    openLWModal(modal_id, modal, ignore);
+                setTimeout(function() {
+                     openLWModal(modal_id, modal);
                 }, modal.trigger * 1000 );
             break;
             case 'onclose':
-                $(document).on('mouseleave', function(event) {
-                    var is_opened = modal_id in opened;
-                    if( !is_opened )
-                        openLWModal(modal_id, modal, ignore);
-
-                    opened[ modal_id ] = true;
+                $(document).one('mouseleave', function(event) {
+                    openLWModal(modal_id, modal);
                 });
             break;
-      }
+        }
     });
 
+    // Open by shortcode
     $('[data-modal-id]').on('click', function(event) {
         var modal_id = +$(this).attr( 'data-modal-id' );
         if( modal_id >= 1 ) {
-            increase_click_count( modal_id );
+            increaseClickCount( modal_id );
         }
     });
 });

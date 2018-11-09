@@ -1,151 +1,147 @@
 <?php
 
 /*
-Plugin Name: Легкие модальные (всплывающие) окна
-Plugin URI: https://github.com/nikolays93/lightweight-modal
-Description: Модальные окна для создания галерей, всплывающих форм и сообщений
-Version: 0.2.2 (beta)
-Author: NikolayS93
-Author URI: https://vk.com/nikolays_93
-Author EMAIL: nikolayS93@ya.ru
-License: GNU General Public License v2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-*/
-
-/**
- * @todo : Добавить сюда хуки плагина
- *
- * Хуки плагина:
- * $pageslug . _after_title (default empty hook)
- * $pageslug . _before_form_inputs (default empty hook)
- * $pageslug . _inside_page_content
- * $pageslug . _inside_side_container
- * $pageslug . _inside_advanced_container
- * $pageslug . _after_form_inputs (default empty hook)
- * $pageslug . _after_page_wrap (default empty hook)
- *
- * Фильтры плагина:
- * "get_{DOMAIN}_option_name" - имя опции плагина
- * "get_{DOMAIN}_option" - значение опции плагина
- * "load_{DOMAIN}_file_if_exists" - информация полученная с файла
- * "get_{DOMAIN}_plugin_dir" - Дирректория плагина (доступ к файлам сервера)
- * "get_{DOMAIN}_plugin_url" - УРЛ плагина (доступ к внешним файлам)
- *
- * $pageslug . _form_action - Аттрибут action формы на странице настроек плагина
- * $pageslug . _form_method - Аттрибут method формы на странице настроек плагина
+ * Plugin Name: Легкие модальные (всплывающие) окна
+ * Plugin URI: https://github.com/nikolays93/lightweight-modal
+ * Description: Модальные окна для создания галерей, всплывающих форм и сообщений
+ * Version: 0.3.0b
+ * Author: NikolayS93
+ * Author URI: https://vk.com/nikolays_93
+ * Author EMAIL: NikolayS93@ya.ru
+ * License: GNU General Public License v2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: lw-modal
+ * Domain Path: /languages/
  */
 
 namespace NikolayS93\LWModal;
 
-if ( ! defined( 'ABSPATH' ) )
-  exit; // disable direct access
+use NikolayS93\WPAdminPage as Admin;
 
-const PLUGIN_DIR = __DIR__;
-const DOMAIN = 'lightweight-modal';
+if ( !defined( 'ABSPATH' ) ) exit('You shall not pass');
 
-// Нужно подключить заранее для подключения файлов @see include_required_files()
-// активации и деактивации плагина @see activate(), uninstall();
-require __DIR__ . '/utils.php';
+require_once ABSPATH . "wp-admin/includes/plugin.php";
+
+if (version_compare(PHP_VERSION, '5.3') < 0) {
+    throw new \Exception('Plugin requires PHP 5.3 or above');
+}
 
 class Plugin
 {
-    private static $initialized;
+    public static $data;
+    protected static $options;
+
     private function __construct() {}
+    private function __clone() {}
 
-    static function activate()
-    { 
-        add_option( Utils::get_option_name(), array(
-            'lib_props_openCloseEffect' => 'zoom',
-            'lib_props_nextPrevEffect' => 'slide',
-        ) );
-    }
-
-    static function uninstall() {
-
-        delete_option( Utils::get_option_name() );
-    }
-
-    public static function initialize()
+    /**
+     * Get option name for a options in the Wordpress database
+     */
+    public static function get_option_name()
     {
-        if( self::$initialized )
-            return false;
-
-        load_plugin_textdomain( DOMAIN, false, basename(PLUGIN_DIR) . '/languages/' );
-        self::include_required_files();
-        self::_actions();
-        self::_filters();
-
-        self::$initialized = true;
+        return apply_filters("get_{DOMAIN}_option_name", DOMAIN);
     }
 
     /**
-     * Подключение файлов нужных для работы плагина
+     * Define required plugin data
      */
-    private static function include_required_files()
+    public static function define()
     {
-        $dir_include = Utils::get_plugin_dir('includes');
-        $libs        = Utils::get_plugin_dir('libs');
+        self::$data = get_plugin_data(__FILE__);
 
-        $classes = array(
-            __NAMESPACE__ . '\WP_List_Table'  => $libs . '/wp-list-table.php',
-            __NAMESPACE__ . '\WP_Admin_Page'  => $libs . '/wp-admin-page.php',
-            __NAMESPACE__ . '\WP_Admin_Forms' => $libs . '/wp-admin-forms.php',
-            __NAMESPACE__ . '\WP_Post_Boxes'  => $libs . '/wp-post-boxes.php',
+        if( !defined(__NAMESPACE__ . '\DOMAIN') ) define(__NAMESPACE__ . '\DOMAIN', self::$data['TextDomain']);
+        if( !defined(__NAMESPACE__ . '\PLUGIN_DIR') ) define(__NAMESPACE__ . '\PLUGIN_DIR', __DIR__);
+        if( !defined('LW_MODAL_COUNT_META') ) define('LW_MODAL_COUNT_META', '_count');
+    }
+
+    /**
+     * include required files
+     */
+    public static function initialize()
+    {
+        load_plugin_textdomain( DOMAIN, false, basename(PLUGIN_DIR) . '/languages/' );
+
+        require PLUGIN_DIR . '/include/utils.php';
+
+        require PLUGIN_DIR . '/vendor/wp-post-boxes.php';
+        $autoload = PLUGIN_DIR . '/vendor/autoload.php';
+        if( file_exists($autoload) ) include $autoload;
+
+        require PLUGIN_DIR . '/include/ajax.php';
+        require PLUGIN_DIR . '/include/register.php';
+        require PLUGIN_DIR . '/include/shortcode.php';
+    }
+
+    public static function hooks()
+    {
+        $class = __NAMESPACE__ . '\Shortcode';
+        add_action( 'LWModal_body', array($class, 'modal_window_head'), 10, 2 );
+        add_action( 'LWModal_body', array($class, 'modal_window_body'), 10, 2 );
+
+        add_action('wp_footer', array($class, 'setup_footer'));
+
+        add_shortcode( Utils::get_shortcode_name(), array($class, 'shortcode') );
+    }
+
+    static function activate()
+    {
+        add_option(
+            self::get_option_name(),
+            array(
+                'lib_prop' => array(
+                    'openCloseEffect' => 'zoom',
+                    'nextPrevEffect' => 'slide',
+                ),
+            )
+        );
+    }
+
+    static function uninstall() { delete_option( self::get_option_name() ); }
+
+    // public static function _admin_assets()
+    // {
+    // }
+
+    public static function admin_menu_page()
+    {
+        $page = new Admin\Page(
+            Utils::get_option_name(),
+            __('Modals', DOMAIN),
+            array(
+                'parent'      => false,
+                'icon_url'    => 'dashicons-external',
+                'menu'        => __('Modals', DOMAIN),
+                'permissions' => 'manage_options',
+                'columns'     => 2,
+            )
         );
 
-        foreach ($classes as $classname => $path) {
-            if( ! class_exists($classname) ) {
-                Utils::load_file_if_exists( $path );
-            }
-            else {
-                Utils::write_debug(sprintf( __('Duplicate class %s', DOMAIN), $classname ), __FILE__);
-            }
-        }
+        // $page->set_assets( array(__CLASS__, '_admin_assets') );
 
-        // includes
-        Utils::load_file_if_exists( $dir_include . '/register-post-type.php' );
-        Utils::load_file_if_exists( $dir_include . '/public.php' );
-        Utils::load_file_if_exists( $dir_include . '/modals/fancybox.php' );
-        Utils::load_file_if_exists( $dir_include . '/admin-page.php' );
+        $page->set_content( function() {
+            Utils::get_admin_template('menu-page.php', false, $inc = true);
+        } );
+
+        $metabox1 = new Admin\Metabox(
+            'lib_settings',
+            __( 'Lib settings', DOMAIN ),
+            function() {
+                Utils::get_admin_template('metabox1.php', false, $inc = true);
+            },
+            $position = 'side',
+            $priority = 'high'
+        );
+
+        $page->add_metabox( $metabox1 );
     }
-
-    private static function _actions()
-    {
-        $class = __NAMESPACE__ . '\Modal';
-        add_action('wp_footer', array($class, 'setup_footer'));
-        add_shortcode( Utils::get_shortcode_name(), array($class, 'shortcode') );
-
-        add_action( 'LWModal_body', array(__CLASS__, 'modal_window_head'), 10, 2 );
-        add_action( 'LWModal_body', array(__CLASS__, 'modal_window_body'), 10, 2 );
-    }
-
-    static function modal_window_body( $modal, $type )
-    {
-        switch ( $type ) {
-            case 'ajax':
-            echo '<div style="min-width: 400px;" id="ajax_data_'.$modal->ID.'"> '. __( 'Loading..' ) .' </div>';
-            break;
-
-            case 'inline':
-            default:
-            echo apply_filters( 'the_content', $modal->post_content );
-            break;
-        }
-    }
-
-    static function modal_window_head( $modal, $type )
-    {
-        if( $modal )
-            echo "<h2>{$modal->post_title}</h2>";
-    }
-
-    private static function _filters(){}
 }
 
+Plugin::define();
 
-
-register_activation_hook( __FILE__, array( __NAMESPACE__ . '\Plugin', 'activate' ) );
-register_uninstall_hook( __FILE__, array( __NAMESPACE__ . '\Plugin', 'uninstall' ) );
+// register_activation_hook( __FILE__, array( __NAMESPACE__ . '\Plugin', 'activate' ) );
+// register_uninstall_hook( __FILE__, array( __NAMESPACE__ . '\Plugin', 'uninstall' ) );
 // register_deactivation_hook( __FILE__, array( __NAMESPACE__ . '\Plugin', 'deactivate' ) );
 
 add_action( 'plugins_loaded', array( __NAMESPACE__ . '\Plugin', 'initialize' ), 10 );
+add_action( 'plugins_loaded', array( __NAMESPACE__ . '\Plugin', 'admin_menu_page' ), 10 );
+add_action( 'plugins_loaded', array( __NAMESPACE__ . '\Plugin', 'hooks' ), 10 );

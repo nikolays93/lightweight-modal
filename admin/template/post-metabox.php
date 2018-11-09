@@ -2,8 +2,7 @@
 
 namespace NikolayS93\LWModal;
 
-if ( ! defined( 'ABSPATH' ) )
-  exit; // disable direct access
+use NikolayS93\WPAdminForm\Form as Form;
 
 global $post;
 
@@ -17,7 +16,7 @@ $shortcode_tpl = "<pre id='shortcode_tpl'>&lt;?php echo do_shortcode('<br><span 
 $help = __('Copy the code above to the desired page, or paste the following code into the template',
     DOMAIN) . '<br>';
 
-$form = array(
+$data = array(
     array(
         'id'    => '_trigger_type',
         'type'  => 'select',
@@ -79,4 +78,17 @@ $form = array(
     ),
 );
 
-return apply_filters('LWModal_post_metabox_fields', $form);
+$form = new Form( $data, $args = array(
+    'is_table' => false,
+    'admin_page' => false,
+    'postmeta' => true,
+) );
+
+/**
+ * @todo repair it!
+ */
+$active = $form->get( array('postmeta' => true) );
+$active[ '_' . $active['_trigger_type'] ] = get_post_meta( $post->ID, '_trigger', true );
+$form->set($active);
+
+$form->display();
