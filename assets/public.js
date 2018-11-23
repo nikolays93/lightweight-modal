@@ -27,13 +27,18 @@ jQuery(document).ready(function($) {
     }
 
     function openLWModal(modal_id, args) {
-        try {
-            disabled = JSON.parse( getCookie( LWM_Settings.cookie ) );
-        } catch(e) {
-            console.log(e);
+        var cook = getCookie( LWM_Settings.cookie );
+        if( cook ) {
+            try {
+                disabled = JSON.parse( cook );
+            } catch(e) {
+                console.log(e);
+            }
         }
 
-        if( args.disable_ontime <= 0 || ( !(modal_id in disabled) && new Date().getTime() > disabled[ modal_id ] ) ) {
+        console.log(args.disable_ontime <= 0, !(modal_id in disabled), new Date().getTime() > disabled[ modal_id ]);
+
+        if( args.disable_ontime <= 0 || !(modal_id in disabled) || new Date().getTime() > disabled[ modal_id ] ) {
             try {
                 $.fancybox.open({
                     src  : '#modal_' + modal_id,
