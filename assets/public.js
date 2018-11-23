@@ -36,8 +36,6 @@ jQuery(document).ready(function($) {
             }
         }
 
-        console.log(args.disable_ontime <= 0, !(modal_id in disabled), new Date().getTime() > disabled[ modal_id ]);
-
         if( args.disable_ontime <= 0 || !(modal_id in disabled) || new Date().getTime() > disabled[ modal_id ] ) {
             try {
                 $.fancybox.open({
